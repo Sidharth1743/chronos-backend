@@ -137,83 +137,106 @@ def view_pdf(filename):
         # Get pinata link
         with open('backend/results/pinata_link.txt', 'r') as f:
             pinata_link = f.read().strip()
-
-        # Get live data from Neo4j
+            
+        # Get graph data directly from Neo4j
+        neo4j_graph = knowledge_graph_pipeline.graph
+        
+        # Fetch all nodes
         nodes_query = """
         MATCH (n)
-        RETURN 
-            n.id as id,
-            labels(n) as labels,
-            properties(n) as properties
+        RETURN collect({
+            id: n.id,
+            type: labels(n)[0],
+            properties: properties(n)
+        }) as nodes
         """
+        nodes_result = neo4j_graph.query(nodes_query)
+        nodes_data = nodes_result[0]['nodes'] if nodes_result else []
         
+        # Fetch all relationships
         rels_query = """
         MATCH (source)-[r]->(target)
-        RETURN 
-            type(r) as type,
-            source.id as source_id,
-            target.id as target_id,
-            properties(r) as properties,
-            labels(source) as source_labels,
-            labels(target) as target_labels
+        RETURN collect({
+            source: source.id,
+            target: target.id,
+            type: type(r),
+            properties: properties(r)
+        }) as relationships
         """
+        rels_result = neo4j_graph.query(rels_query)
+        rels_data = rels_result[0]['relationships'] if rels_result else []
         
-        nodes_result = knowledge_graph_pipeline.graph.query(nodes_query)
-        rels_result = knowledge_graph_pipeline.graph.query(rels_query)
-
+        # Transform data for visualization
         nodes = []
         links = []
         node_ids = set()
-
+        
         # Process nodes
-        for node_data in nodes_result:
-            node_id = node_data['id']
-            node_ids.add(node_id)
-            nodes.append({
-                'id': node_id,
-                'labels': node_data['labels'],
-                'properties': node_data['properties'],
-                'title': node_id.replace('_', ' ').title()
-            })
-
-        # Process relationships
-        for rel_data in rels_result:
-            source_id = rel_data['source_id']
-            target_id = rel_data['target_id']
-
-            # Add the relationship
-            links.append({
-                'source': source_id,
-                'target': target_id,
-                'type': rel_data['type'],
-                'properties': rel_data['properties'] if rel_data['properties'] else {}
-            })
-        
-        # Add statistics to the response
-        stats = knowledge_graph_pipeline.get_statistics()
-        
-        graph_data = {
-            'nodes': nodes,
-            'links': links,
-            'stats': {
-                'totalNodes': stats['nodes'],
-                'totalRelationships': stats['relationships']
+        for node in nodes_data:
+            # Process node properties
+            properties = node.get('properties', {})
+            
+            # Extract UMLS data if available
+            umls_data = {
+                'cui': properties.get('umls_cui'),
+                'semantic_type': properties.get('umls_semantic_type'),
+                'preferred_name': properties.get('umls_preferred_name')
             }
-        }
+            
+            # Remove UMLS data from general properties
+            for k in ['umls_cui', 'umls_semantic_type', 'umls_preferred_name']:
+                if k in properties:
+                    del properties[k]
+            node_ids.add(node['id'])
+            nodes.append({
+                'id': node['id'],
+                'labels': [node['type']],
+                'properties': node.get('properties', {}),
+                'title': node['id'].replace('_', ' ').title()  # Make ID readable
+            })
+            
+        # Then process relationships from Neo4j data
+        for rel in rels_data:
+            source_id = rel['source']
+            target_id = rel['target']
+            
+            # Add any nodes that might only appear in relationships
+            if source_id not in node_ids:
+                node_ids.add(source_id)
+                nodes.append({
+                    'id': source_id,
+                    'labels': ['Unknown'],  # Default label since we don't have type info
+                    'properties': {},
+                    'title': source_id.replace('_', ' ').title()
+                })
+            
+            if target_id not in node_ids:
+                node_ids.add(target_id)
+                nodes.append({
+                    'id': target_id,
+                    'labels': ['Unknown'],  # Default label since we don't have type info
+                    'properties': {},
+                    'title': target_id.replace('_', ' ').title()
+                })
+            
+        # Process relationships
+        for rel in rels_data:
+            links.append({
+                'source': rel['source'],
+                'target': rel['target'],
+                'type': rel['type'],
+                'properties': rel.get('properties', {})
+            })
             
         return render_template('view_pdf.html', 
                              filename=filename,
-                             graph_data=json.dumps(graph_data),
+                             graph_data=json.dumps({'nodes': nodes, 'links': links}),
                              pinata_link=pinata_link)
     except Exception as e:
         print(f"Error processing graph data: {str(e)}")
         return render_template('view_pdf.html', 
                              filename=filename,
-                             graph_data=json.dumps({
-                                 'nodes': [], 
-                                 'links': [], 
-                                 'stats': {'totalNodes': 0, 'totalRelationships': 0}
-                             }),
+                             graph_data=json.dumps({'nodes': [], 'links': []}),
                              pinata_link='')
 
 @app.route('/get_graph_data')
