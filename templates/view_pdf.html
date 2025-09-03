@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Document Analysis</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+        .main-container {
+            display: flex;
+            gap: 20px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+        .left-panel {
+            flex: 1;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .right-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .node-details-panel {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            display: none;
+        }
+        .node-details-panel h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .node-details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .node-details-table td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+        .node-details-table td:first-child {
+            font-weight: bold;
+            width: 30%;
+        }
+        .pdf-container {
+            width: 100%;
+            height: 800px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .graph-container {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            position: relative;
+            background-color: #ffffff;
+        }
+        .back-button {
+            margin-bottom: 20px;
+        }
+        .back-button a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+        .info-section {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .node {
+            fill: #66b2ff;
+            stroke: #004d99;
+            stroke-width: 1.5px;
+            cursor: pointer;
+        }
+        .node:hover {
+            fill: #004d99;
+        }
+        .link {
+            stroke: #999;
+            stroke-opacity: 0.6;
+            stroke-width: 1px;
+        }
+        .node-label {
+            font-size: 12px;
+            font-family: Arial;
+            pointer-events: none;
+            fill: #333;
+            text-anchor: middle;
+        }
+        .link-label {
+            font-size: 10px;
+            font-family: Arial;
+            pointer-events: none;
+            fill: #666;
+            text-anchor: middle;
+        }
+    </style>
+</head>
+<body>
+    <div class="back-button">
+        <a href="{{ url_for('upload_file') }}">← Back to Upload</a>
+    </div>
+    
+    <div class="main-container">
+        <div class="left-panel">
+            <h2>PDF Document</h2>
+            <div class="pdf-container">
+                <iframe 
+                    src="{{ url_for('uploaded_file', filename=filename) }}"
+                    type="application/pdf"
+                    width="100%"
+                    height="100%">
+                    <p>It appears your browser doesn't support embedded PDFs. 
+                       <a href="{{ url_for('uploaded_file', filename=filename) }}">Click here to download the PDF</a>
+                    </p>
+                </iframe>
+            </div>
+            
+            {% if pinata_link %}
+            <div class="info-section">
+                <h3>IPFS Link (Pinata)</h3>
+                <a href="{{ pinata_link }}" target="_blank">View on IPFS</a>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="right-panel">
+            <h2>Knowledge Graph</h2>
+            <div id="knowledge-graph" class="graph-container"></div>
+            <div id="node-details" class="node-details-panel">
+                <h3>Node Details</h3>
+                <table class="node-details-table">
+                    <tbody>
+                        <tr>
+                            <td>Type</td>
+                            <td id="node-type"></td>
+                        </tr>
+                        <tr>
+                            <td>ID</td>
+                            <td id="node-id"></td>
+                        </tr>
+                        <tr>
+                            <td>Properties</td>
+                            <td id="node-properties"></td>
+                        </tr>
+                        <tr>
+                            <td>Relationships</td>
+                            <td id="node-relationships"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log('Graph Data:', {{ graph_data|safe }});  // Debug line
+        const graphData = {{ graph_data|safe }};
+        
+        if (graphData && graphData.nodes && graphData.nodes.length > 0) {
+            const width = document.getElementById('knowledge-graph').clientWidth;
+            const height = document.getElementById('knowledge-graph').clientHeight;
+
+            // Create SVG container
+            const svg = d3.select('#knowledge-graph')
+                .append('svg')
+                .attr('width', width)
+                .attr('height', height);
+
+            // Create zoom behavior
+            const zoom = d3.zoom()
+                .scaleExtent([0.1, 4])
+                .on('zoom', () => {
+                    container.attr('transform', d3.event.transform);
+                });
+
+            svg.call(zoom);
+
+            // Create container for the graph
+            const container = svg.append('g');
+
+            // Create the simulation
+            const simulation = d3.forceSimulation(graphData.nodes)
+                .force('link', d3.forceLink(graphData.links).id(d => d.id).distance(100))
+                .force('charge', d3.forceManyBody().strength(-500))
+                .force('center', d3.forceCenter(width / 2, height / 2))
+                .force('collision', d3.forceCollide().radius(50));
+
+            // Draw the links
+            const link = container.append('g')
+                .selectAll('line')
+                .data(graphData.links)
+                .enter()
+                .append('line')
+                .attr('class', 'link');
+
+            // Draw the nodes
+            const node = container.append('g')
+                .selectAll('circle')
+                .data(graphData.nodes)
+                .enter()
+                .append('circle')
+                .attr('class', 'node')
+                .attr('r', 15)
+                .attr('title', d => d.title)
+                .style('fill', d => {
+                    // Color nodes based on their type/label
+                    const typeColors = {
+                        'AnatomicalStructure': '#A5D6A7',
+                        'Biomarker': '#81D4FA',
+                        'ClinicalObservation': '#80CBC4',
+                        'ContextualFactor': '#F48FB1',
+                        'DiagnosticMethod': '#CE93D8',
+                        'DosageForm': '#FFE082',
+                        'Evidence': '#FFCC80',
+                        'HealthOutcome': '#90CAF9',
+                        'Hypothesis': '#BCAAA4',
+                        'MechanisticConcept': '#80CBC4',
+                        'PathophysiologicalPattern': '#FFE082',
+                        'PractitionerRole': '#B39DDB',
+                        'SourceText': '#B39DDB',
+                        'TemporalPhase': '#9FA8DA',
+                        'TherapeuticApproach': '#FFAB91',
+                        'TherapeuticOutcome': '#FFAB91'
+                    };
+                    return typeColors[d.labels[0]] || '#66b2ff';
+                })
+                .on('click', showNodeDetails);
+
+            // Add node labels
+            const nodeLabels = container.append('g')
+                .selectAll('text')
+                .data(graphData.nodes)
+                .enter()
+                .append('text')
+                .attr('class', 'node-label')
+                .text(d => d.title)
+                .attr('dy', 25);
+
+            // Add relationship labels
+            const linkLabels = container.append('g')
+                .selectAll('text')
+                .data(graphData.links)
+                .enter()
+                .append('text')
+                .attr('class', 'link-label')
+                .text(d => d.type)
+                .attr('dy', -5);
+
+            // Add drag behavior
+            node.call(d3.drag()
+                .on('start', dragstarted)
+                .on('drag', dragged)
+                .on('end', dragended));
+
+            // Update positions on each tick
+            simulation.on('tick', () => {
+                link
+                    .attr('x1', d => d.source.x)
+                    .attr('y1', d => d.source.y)
+                    .attr('x2', d => d.target.x)
+                    .attr('y2', d => d.target.y);
+
+                node
+                    .attr('cx', d => d.x)
+                    .attr('cy', d => d.y);
+
+                nodeLabels
+                    .attr('x', d => d.x)
+                    .attr('y', d => d.y);
+
+                linkLabels
+                    .attr('x', d => (d.source.x + d.target.x) / 2)
+                    .attr('y', d => (d.source.y + d.target.y) / 2);
+            });
+
+            // Drag functions
+            function dragstarted(d) {
+                if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+                d.fx = d.x;
+                d.fy = d.y;
+            }
+
+            function dragged(d) {
+                d.fx = d3.event.x;
+                d.fy = d3.event.y;
+            }
+
+            function dragended(d) {
+                if (!d3.event.active) simulation.alphaTarget(0);
+                d.fx = null;
+                d.fy = null;
+            }
+
+            // Function to show node details
+            function showNodeDetails(d) {
+                const detailsPanel = document.getElementById('node-details');
+                const nodeType = document.getElementById('node-type');
+                const nodeId = document.getElementById('node-id');
+                const nodeProperties = document.getElementById('node-properties');
+                const nodeRelationships = document.getElementById('node-relationships');
+
+                // Show the panel
+                detailsPanel.style.display = 'block';
+
+                // Update the details
+                nodeType.textContent = d.labels ? d.labels.join(', ') : 'Unknown';
+                nodeId.textContent = d.id;
+
+                // Format properties
+                const props = Object.entries(d.properties || {})
+                    .map(([key, value]) => `${key}: ${value}`)
+                    .join('\n');
+                nodeProperties.textContent = props || 'No properties';
+
+                // Find relationships for this node
+                const rels = graphData.links
+                    .filter(link => link.source.id === d.id || link.target.id === d.id)
+                    .map(link => {
+                        const direction = link.source.id === d.id ? 'OUT' : 'IN';
+                        const otherNode = link.source.id === d.id ? link.target : link.source;
+                        return `${direction}: ${link.type} (${otherNode.title})`;
+                    })
+                    .join('\n');
+                nodeRelationships.textContent = rels || 'No relationships';
+
+                // Highlight the selected node and its connections
+                node.style('opacity', n => n.id === d.id || 
+                    graphData.links.some(link => 
+                        (link.source.id === d.id && link.target.id === n.id) ||
+                        (link.target.id === d.id && link.source.id === n.id)
+                    ) ? 1 : 0.3);
+                
+                link.style('opacity', l => 
+                    l.source.id === d.id || l.target.id === d.id ? 1 : 0.1);
+                
+                nodeLabels.style('opacity', n => n.id === d.id || 
+                    graphData.links.some(link => 
+                        (link.source.id === d.id && link.target.id === n.id) ||
+                        (link.target.id === d.id && link.source.id === n.id)
+                    ) ? 1 : 0.3);
+            }
+
+            // Add click handler for the graph container to reset highlights
+            svg.on('click', function(event) {
+                if (event.target.tagName === 'svg') {
+                    node.style('opacity', 1);
+                    link.style('opacity', 0.6);
+                    nodeLabels.style('opacity', 1);
+                    document.getElementById('node-details').style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
