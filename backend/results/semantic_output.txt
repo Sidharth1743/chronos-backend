@@ -1,0 +1,119 @@
+--- Chunk 1 ---
+Summary : This image shows a button or icon labeled "Check for updates" with a circular design and a red bookmark symbol, likely representing a software update feature.
+
+logo: 
+  Scene Overview : 
+    • Main subject is a square button with a circular motif and a red bookmark/ribbon in the center.
+    • Text below the icon reads "Check for updates".
+    • The circular motif is composed of blue, yellow, and red segments.
+  Technical Details : 
+    • No company name or tagline is visible.
+    • The design is simple, with a light gray background and soft shadowing.
+    • The icon is centered above the text.
+  Spatial Relationships : 
+    • The icon is placed above the text, both centered within the button.
+    • The button is square, with the icon and text vertically aligned.
+  Analysis : 
+    • The use of a circular motif and bookmark suggests a focus on updates or notifications.
+    • The color palette (blue, yellow, red) is visually distinct and may be intended to attract attention to the update feature.
+
+--- Chunk 2 ---
+Analysis : 
+    • The use of a circular motif and bookmark suggests a focus on updates or notifications.
+    • The color palette (blue, yellow, red) is visually distinct and may be intended to attract attention to the update feature. <!-- figure, from page 0 (l=0.881,t=0.036,r=0.927,b=0.072), with ID 889e33c5-70f2-4c60-b8a1-ddeb70e4a7aa -->
+
+Original Article <!-- text, from page 0 (l=0.074,t=0.063,r=0.362,b=0.086), with ID 62508b1f-1e4a-4508-9305-715b8c6dcb92 -->
+
+Prevalence of occult spina bifida in isthmic versus degenerative spondylolisthesis: retrospective radiographic review of consecutive surgical patients <!-- text, from page 0 (l=0.071,t=0.106,r=0.896,b=0.194), with ID 7ee27630-7f59-4e5a-98d1-d07b199b6346 -->
+
+Anmar Al-Witri1^, Yingda Li2
+
+1Department of Neurosurgery, Nepean Public Hospital, Sydney, NSW, Australia; 2Department of Neurosurgery, Westmead Public Hospital, Sydney, NSW, Australia  
+*Contributions:* (I) Conception and design: Both authors; (II) Administrative support: A Al-Witri; (III) Provision of study materials or patients: A Al-Witri; (IV) Collection and assembly of data: Both authors; (V) Data analysis and interpretation: A Al-Witri; (VI) Manuscript writing: Both authors; (VII) Final approval of manuscript: Both authors.  
+*Correspondence to:* Anmar Al-Witri, MBCHB. Department of Neurosurgery, Nepean Public Hospital, Corner Somerset and Derby Street, Kingswood, Sydney, NSW 2747, Australia. Email: anmar.alwitri@health.nsw.gov.au.
+
+--- Chunk 3 ---
+Department of Neurosurgery, Nepean Public Hospital, Corner Somerset and Derby Street, Kingswood, Sydney, NSW 2747, Australia. Email: anmar.alwitri@health.nsw.gov.au. <!-- text, from page 0 (l=0.070,t=0.210,r=0.930,b=0.364), with ID 9e1647d3-b0fc-4091-a114-c288126bc119 -->
+
+**Background:** Spondylolisthesis is defined as the anterior or posterior translation of one vertebral body over another. Spina bifida occulta (SBO) is a developmental anomaly characterized by the incomplete fusion of the laminae of one or more vertebral arches along the midline. Currently, there is no documented prevalence of SBO in patients with degenerative spondylolisthesis (DS) undergoing spinal surgery. This study aims to estimate the prevalence of SBO in patients with DS undergoing spine surgery and compare it with that in patients with isthmic spondylolisthesis (IS) undergoing surgery. <!-- text, from page 0 (l=0.165,t=0.378,r=0.836,b=0.479), with ID ab28d0ec-98f4-48a6-ac47-5907226a1851 -->
+
+**Methods:** Our study is a cross-sectional retrospective review of consecutive patient records from two major tertiary hospitals in Sydney, Australia, covering the period from January 1st, 2015 to December 31st, 2023. Patients diagnosed with spondylolisthesis at spinal levels L4/L5 or L5/S1 were identified and screened for the presence of SBO. <!-- text, from page 0 (l=0.166,t=0.479,r=0.835,b=0.545), with ID 4fb174aa-2621-4421-a65a-bc2bea193896 -->
+
+**Results:** Among the patients who underwent spinal surgery, 23.4% were found to have spondylolisthesis due to either degenerative changes or isthmic pars defects at L4/L5 or L5/S1. Within the DS group, the prevalence of SBO was 11.9% (all at the S1 level), while 24.7% of the IS group exhibited SBO.
+
+--- Chunk 4 ---
+Within the DS group, the prevalence of SBO was 11.9% (all at the S1 level), while 24.7% of the IS group exhibited SBO. The male-to-female ratio for patients with IS and SBO was 3.6:1, compared to 0.66:1 for those with DS and SBO. <!-- text, from page 0 (l=0.167,t=0.545,r=0.834,b=0.612), with ID 839d5029-1801-4e82-8a69-e07b761ded0a -->
+
+**Conclusions:** SBO is a frequently overlooked anatomical variation in adult spine surgery, particularly in cases of degenerative and IS. With a prevalence of 11.9% in DS, it is crucial for spine surgeons to be vigilant, especially during open posterior lumbar spine fusion surgeries, to prevent unintended durotomy and neurological damage. Awareness of the absence of the S1 spinous process is essential for effective surgical planning, particularly when using navigated spinous process clamps for pedicle screw placement. <!-- text, from page 0 (l=0.167,t=0.612,r=0.835,b=0.697), with ID 5770ad75-970b-48af-a6cb-c5a7d9651c35 -->
+
+**Keywords:** Spina bifida occulta (SBO); degenerative spondylolisthesis (DS); isthmic spondylolisthesis (IS) <!-- text, from page 0 (l=0.167,t=0.702,r=0.784,b=0.723), with ID f6e9ac2a-e9d0-45a7-b78c-b4902f3a326d -->
+
+Submitted Nov 17, 2024. Accepted for publication Mar 10, 2025.
+
+--- Chunk 5 ---
+Accepted for publication Mar 10, 2025. Published online Jun 19, 2025.
+doi: 10.21037/jss-24-151 <!-- text, from page 0 (l=0.167,t=0.736,r=0.723,b=0.769), with ID 3c08000c-b4b7-417e-8fb1-c4aeaeccf5a8 -->
+
+**View this article at:** https://dx.doi.org/10.21037/jss-24-151 <!-- text, from page 0 (l=0.168,t=0.770,r=0.519,b=0.787), with ID 4912b516-5889-413b-943e-76c9c7a03d11 -->
+
+^ ORCID: 0000-0002-3645-0236. <!-- text, from page 0 (l=0.073,t=0.895,r=0.287,b=0.912), with ID 354cedcc-a840-4ca1-9dd2-9a232c904c95 -->
+
+© AME Publishing Company. <!-- marginalia, from page 0 (l=0.072,t=0.942,r=0.253,b=0.961), with ID 5903dba0-c12a-4b33-924c-f42443cb000d -->
+
+*J Spine Surg* 2025;11(2):227-233  |  https://dx.doi.org/10.21037/jss-24-151 <!-- marginalia, from page 0 (l=0.496,t=0.941,r=0.927,b=0.961), with ID ee50e341-e7d6-4248-9120-818ff8fb33c5 -->
+
+228 <!-- marginalia, from page 1 (l=0.073,t=0.074,r=0.102,b=0.088), with ID 7610010d-85de-4035-949a-7dbe5e082eb5 -->
+
+Al-Witri and Li.
+
+--- Chunk 6 ---
+SBO prevalence in isthmic or DS <!-- marginalia, from page 1 (l=0.614,t=0.073,r=0.927,b=0.091), with ID 1623b010-461e-42df-8925-648c882ba273 -->
+
+Introduction
+
+*Background*
+
+The term spondylolisthesis originates from the Greek words “spondylos”, meaning vertebra, and “olisthánein” meaning “to slip” (1). It broadly refers to the displacement of one vertebral body over another. In 1976, Wiltse *et al.* (2) classified spondylolisthesis into five categories: dysplastic, isthmic, degenerative, traumatic, and pathological. Epidemiological data on spondylolisthesis varies widely, with reported prevalence ranging from 2.7% to 28% (3,4), influenced by factors such as age, sex, and whether the population is symptomatic or asymptomatic. Spina bifida occulta (SBO) is the most benign form of spina bifida, involves the failure of the laminae to fuse. The prevalence of SBO in adults can be as high as 12.4% (5). While a correlation between SBO and spondylolysis is recognized with prevalence ranging from 22–70% (6), the prevalence of SBO in patients with degenerative spondylolisthesis (DS) undergoing surgery remains unreported. The most common levels of spondylolisthesis are L4/L5 and L5/S1 (4) and whence we elected to only include those levels in our study.
+
+--- Chunk 7 ---
+The most common levels of spondylolisthesis are L4/L5 and L5/S1 (4) and whence we elected to only include those levels in our study. <!-- text, from page 1 (l=0.071,t=0.106,r=0.484,b=0.494), with ID 65ec023b-3666-4df4-bc35-bd0d8b8675a2 -->
+
+*Rationale and knowledge gap*
+
+Recognizing SBO during surgical procedures is crucial to mitigate the risk of unintended durotomy and injury to <!-- text, from page 1 (l=0.072,t=0.520,r=0.486,b=0.581), with ID 3304b33a-0457-42a8-8023-53d7de9a63e5 -->
+
+- Highlight box
+
+- **Key findings**
+  - • Prevalence of spina bifida occulta with spondylolisthesis is 14.9%.
+  - • Prevalence of spina bifida occulta with degenerative spondylolisthesis 11.9%.
+  - • Prevalence of spina bifida occulta with isthmic spondylolisthesis is 24.7%.
+
+- **What is known and what is new?**
+  - • Prevalence of spina bifida occulta in the general population ranges 7.4–12.4%.
+  - • Prevalence of spina bifida occulta in a surgical cohort focused on the L4–S1 levels is 14.9%.
+
+- **What is the implication, and what should change now?**
+  - • Increased awareness of this occult condition to help plan safe surgery on the lumbar spine.
+  - • Careful examination of pre-operative imaging for patients planned for surgery on the lower lumbar spine screening for spina bifida occulta. <!-- text, from page 1 (l=0.077,t=0.613,r=0.480,b=0.909), with ID fbe33830-982e-4214-b525-dfc3c3c48a9c -->
+
+neural elements due to unrecognized bony defects. With the advent of navigated instrumentation and spinal process clamps, awareness of the absence of the spinous process is vital for effective surgical planning.
+
+--- Chunk 8 ---
+With the advent of navigated instrumentation and spinal process clamps, awareness of the absence of the spinous process is vital for effective surgical planning. There is no reported prevalence of SBO in a surgical cohort with DS. <!-- text, from page 1 (l=0.515,t=0.108,r=0.928,b=0.192), with ID cedee3b1-f55b-45eb-8357-f6cb92460960 -->
+
+*Objective*
+
+This study aims to quantify the prevalence of SBO in a cohort of surgical patients with either DS or isthmic spondylolisthesis (IS). Most existing studies on spondylolisthesis prevalence focus on asymptomatic populations, neglecting symptomatic surgical cohorts. Our research seeks to raise awareness of SBO and quantify its prevalence among patients treated for symptomatic lower back pathology, categorizing them based on degenerative versus IS and the presence or absence of SBO. We present this article in accordance with the STROBE reporting checklist (available at https://jss.amegroups.com/article/view/10.21037/jss-24-151/rc). <!-- text, from page 1 (l=0.515,t=0.216,r=0.928,b=0.443), with ID 70a3e06c-7bb5-48b3-89c2-2b63d9984186 -->
+
+Methods
+
+We performed a cross-sectional retrospective review of patient records from two tertiary hospitals in Sydney (Nepean Public Hospital and Westmead Public Hospital), covering surgeries conducted between January 1st, 2015 and December 31st, 2023. Surgeries were performed by both neurosurgeons and orthopaedic spine surgeons. Inclusion criteria included patients aged over 18 years who underwent surgery at spinal levels L4–S1, with imaging available for review. Exclusion criteria encompassed surgeries at levels other than L4–S1, surgeries conducted prior to the study period, unavailability of imaging, and spondylolisthesis due to causes other than degenerative or isthmic factors, spondylolisthesis at level other than L4–S1 (*Table 1*). Patients’ electronic medical records were accessed, and baseline demographic data (age, sex) were collected.
+
+--- Chunk 9 ---
+Patients’ electronic medical records were accessed, and baseline demographic data (age, sex) were collected. Imaging [X-rays, computed tomography (CT), magnetic resonance imaging (MRI)] was reviewed for the presence of spondylolisthesis, its level, aetiology (based on Wiltse classification), grade (according to Meyerding grading), and presence of SBO and its level. Other pathologies like spinal lipoma, limited dorsal myeloschisis and dermal sinus were screened for. Most patients’ images were available on the hospitals Picture Archiving and Communication System (PACS); however, some patients had their images done at private radiology providers outside the hospital PACS. <!-- text, from page 1 (l=0.514,t=0.466,r=0.929,b=0.913), with ID 7beb63da-7cbd-47cc-aad5-136a8793d3bf -->
+
+© AME Publishing Company. <!-- marginalia, from page 1 (l=0.074,t=0.943,r=0.250,b=0.959), with ID 4ef2a136-cdfa-4f6a-80fc-a1456f297232 -->
+
+*J Spine Surg* 2025;11(2):227-233  |  https://dx.doi.org/10.21037/jss-24-151 <!-- marginalia, from page 1 (l=0.498,t=0.943,r=0.924,b=0.959), with ID 55c3693c-e1ee-4aad-a30d-973542e3cd95 -->
+
