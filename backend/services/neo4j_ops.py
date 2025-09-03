@@ -30,7 +30,7 @@ class KnowledgeGraphPipeline:
         # Initialize LLM
         self.llm = ChatOpenAI(
             api_key=openai_api_key,
-            model="gpt-4o",
+            model="gpt-4",
             temperature=0.1
         )
         
