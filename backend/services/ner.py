@@ -8,6 +8,7 @@ from langchain.schema import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from dotenv import load_dotenv
 import requests
+from .umls import UMLSService
 
 load_dotenv() 
 
@@ -62,9 +63,8 @@ class GraphExtractionParser(BaseOutputParser):
         # Extract nodes
         for match in re.finditer(node_pattern, text):
             node_id, node_type = match.groups()
-            properties = {'source': 'langchain_extracted'}
             if node_id not in nodes:
-                node = Node(id=node_id, type=node_type, properties=properties)
+                node = Node(id=node_id, type=node_type)
                 nodes[node_id] = node
 
         # Extract relationships
@@ -76,13 +76,11 @@ class GraphExtractionParser(BaseOutputParser):
                 subj_id, subj_type, obj_id, obj_type, rel_type = groups
                 timestamp = None
             
-            properties = {'source': 'langchain_extracted'}
-            
             # Create nodes if they don't exist
             if subj_id not in nodes:
-                nodes[subj_id] = Node(id=subj_id, type=subj_type, properties=properties)
+                nodes[subj_id] = Node(id=subj_id, type=subj_type)
             if obj_id not in nodes:
-                nodes[obj_id] = Node(id=obj_id, type=obj_type, properties=properties)
+                nodes[obj_id] = Node(id=obj_id, type=obj_type)
             
             subj = nodes[subj_id]
             obj = nodes[obj_id]
@@ -90,8 +88,7 @@ class GraphExtractionParser(BaseOutputParser):
                 subj=subj,
                 obj=obj,
                 type=rel_type,
-                timestamp=timestamp,
-                properties=properties,
+                timestamp=timestamp
             )
             relationships.append(relationship)
 
@@ -117,33 +114,45 @@ class LangChainKnowledgeGraphAgent:
             llm: ChatOpenAI model instance
             custom_prompt: Custom extraction prompt (optional)
         """
-        self.llm = llm or ChatOpenAI(
-            model="gpt-4o",
-            temperature=0.1,
-            max_tokens=4000
-        )
-        
-        # Default extraction prompt
-        self.extraction_prompt = custom_prompt or self._get_default_prompt()
-        
-        # Create prompt template
-        self.prompt_template = PromptTemplate(
-            input_variables=["content"],
-            template=self.extraction_prompt
-        )
-        
-        # Create parser
-        self.parser = GraphExtractionParser()
-        
-        # Create extraction chain
-        self.extraction_chain = self.prompt_template | self.llm | self.parser
-        
-        # Text splitter for large documents
-        self.text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=2000,
-            chunk_overlap=200,
-            separators=["\n\n", "\n", ".", "!", "?", ",", " ", ""]
-        )
+        try:
+            self.llm = llm or ChatOpenAI(
+                model="gpt-4o",
+                temperature=0.1,
+                max_tokens=4000
+            )
+            
+            # Default extraction prompt
+            self.extraction_prompt = custom_prompt or self._get_default_prompt()
+            
+            # Create prompt template
+            self.prompt_template = PromptTemplate(
+                input_variables=["content"],
+                template=self.extraction_prompt
+            )
+            
+            # Create parser
+            self.parser = GraphExtractionParser()
+            
+            # Create extraction chain
+            self.extraction_chain = self.prompt_template | self.llm | self.parser
+            
+            # Text splitter for large documents
+            self.text_splitter = RecursiveCharacterTextSplitter(
+                chunk_size=2000,
+                chunk_overlap=200,
+                separators=["\n\n", "\n", ".", "!", "?", ",", " ", ""]
+            )
+            
+            # Initialize UMLS service
+            try:
+                self.umls_service = UMLSService()
+            except Exception as e:
+                print(f"Warning: Could not initialize UMLS service: {e}. UMLS enrichment will be skipped.")
+                self.umls_service = None
+                
+        except Exception as e:
+            print(f"Error initializing LangChainKnowledgeGraphAgent: {e}")
+            raise
 
     def _get_default_prompt(self) -> str:
         """Get the default extraction prompt with HypE integration."""
@@ -257,27 +266,57 @@ Content to process:
     def _add_hype_nodes_and_rels(self, graph_element: GraphElement) -> GraphElement:
         """
         Add HypE-specific nodes and relationships to the graph element.
+        Also enriches nodes with UMLS concepts if UMLS service is available.
         
         Args:
             graph_element: GraphElement object to enhance
             
         Returns:
-            Enhanced GraphElement with HypE nodes and relationships
+            Enhanced GraphElement with HypE nodes and relationships, and UMLS concepts
         """
         new_nodes = []
         new_relationships = []
         
-        # Re-label ClinicalObservation as Evidence and add Hypothesis nodes
+        # Process each node
         for node in graph_element.nodes:
+            # Add UMLS concepts if service is available
+            if self.umls_service:
+                node_term = node.id.replace('_', ' ')
+                try:
+                    umls_data = self.umls_service.get_umls_concept(node_term)
+                    if umls_data:
+                        if not node.properties:
+                            node.properties = {}
+                        node.properties.update({
+                            'umls_cui': umls_data['cui'],
+                            'umls_semantic_type': umls_data['semantic_type'],
+                            'umls_preferred_name': umls_data['preferred_name']
+                        })
+                except Exception as e:
+                    print(f"Warning: UMLS lookup failed for term '{node_term}': {e}")
+            
+            # Re-label ClinicalObservation as Evidence and add Hypothesis nodes
             if node.type == "ClinicalObservation":
                 node.type = "Evidence"  # HypE re-labeling
+            
             # Infer Hypothesis nodes for terms suggesting causality
             if any(term in node.id.lower() for term in ["increase", "risk", "cause", "effect"]):
                 hypothesis_node = Node(
                     id=f"{node.id}_hypothesis",
                     type="Hypothesis",
-                    properties={"source": "langchain_extracted"}
+                    properties={
+                        "source": "langchain_extracted",
+                        "original_term": node_term
+                    }
                 )
+                # Try to get UMLS concept for hypothesis
+                hyp_umls_data = self.umls_service.get_umls_concept(node_term + " hypothesis")
+                if hyp_umls_data:
+                    hypothesis_node.properties.update({
+                        'umls_cui': hyp_umls_data['cui'],
+                        'umls_semantic_type': hyp_umls_data['semantic_type'],
+                        'umls_preferred_name': hyp_umls_data['preferred_name']
+                    })
                 new_nodes.append(hypothesis_node)
                 new_relationships.append(Relationship(
                     subj=node,

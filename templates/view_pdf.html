@@ -183,11 +183,15 @@
         </div>
         
         <div class="right-panel">
-            <div class="graph-header">
-                <h2>Knowledge Graph</h2>
-                <div class="graph-stats">
-                    <span id="node-count">Nodes: 0</span>
-                    <span id="relationship-count">Relationships: 0</span>
+            <div class="results-overview">
+                <h3>Knowledge Graph Statistics</h3>
+                <div class="overview-section">
+                    <h4>Nodes (<span id="total-nodes">0</span>)</h4>
+                    <div id="node-types" class="type-tags"></div>
+                </div>
+                <div class="overview-section">
+                    <h4>Relationships (<span id="total-relationships">0</span>)</h4>
+                    <div id="relationship-types" class="type-tags"></div>
                 </div>
             </div>
             <div id="knowledge-graph" class="graph-container"></div>
@@ -218,8 +222,16 @@
     </div>
 
     <script>
-        const graphData = {{ graph_data|safe }};
-        
+        // Initialize graph data
+        let graphData;
+        try {
+            graphData = {{ graph_data|safe }};
+            console.log('Graph data loaded:', graphData);
+        } catch (e) {
+            console.error('Error parsing graph data:', e);
+            graphData = { nodes: [], links: [], stats: { totalNodes: 0, totalRelationships: 0 } };
+        }
+
         function getNodeTypeColor(type) {
             const colors = {
                 'AnatomicalStructure': '#FFE082',
@@ -297,7 +309,10 @@
             const svg = d3.select('#knowledge-graph')
                 .append('svg')
                 .attr('width', width)
-                .attr('height', height);
+                .attr('height', height)
+                .call(d3.zoom().on('zoom', function(event) {
+                    container.attr('transform', event.transform);
+                }));
 
             // Create zoom behavior
             const zoom = d3.zoom()
@@ -426,6 +441,7 @@
 
             // Function to show node details
             function showNodeDetails(d) {
+                console.log('Node clicked:', d);  // Debug line
                 const detailsPanel = document.getElementById('node-details');
                 const nodeType = document.getElementById('node-type');
                 const nodeId = document.getElementById('node-id');

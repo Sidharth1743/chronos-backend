@@ -3,436 +3,396 @@
     {
       "id": "occult_spina_bifida",
       "type": "MechanisticConcept",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "id": "isthmic_spondylolisthesis",
       "type": "Evidence",
       "properties": {
-        "source": "langchain_extracted"
+        "umls_cui": "C0410656",
+        "umls_semantic_type": "Unknown",
+        "umls_preferred_name": "Isthmic spondylolisthesis"
       }
     },
     {
       "id": "degenerative_spondylolisthesis",
       "type": "Evidence",
       "properties": {
-        "source": "langchain_extracted"
+        "umls_cui": "C0264184",
+        "umls_semantic_type": "Unknown",
+        "umls_preferred_name": "Degenerative spondylolisthesis"
       }
     },
     {
       "id": "retrospective_radiographic_review",
       "type": "DiagnosticMethod",
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "id": "consecutive_surgical_patients",
-      "type": "ContextualFactor",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "id": "anmar_al_witri",
       "type": "SourceText",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "id": "yingda_li",
       "type": "SourceText",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "id": "spondylolisthesis",
       "type": "Evidence",
       "properties": {
-        "source": "langchain_extracted"
+        "umls_cui": "C0038016",
+        "umls_semantic_type": "Unknown",
+        "umls_preferred_name": "Spondylolisthesis"
       }
     },
     {
       "id": "spina_bifida_occulta",
       "type": "MechanisticConcept",
       "properties": {
-        "source": "langchain_extracted"
+        "umls_cui": "C0080174",
+        "umls_semantic_type": "Unknown",
+        "umls_preferred_name": "Spina Bifida Occulta"
       }
     },
     {
       "id": "vertebral_body_translation",
       "type": "PathophysiologicalPattern",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "id": "incomplete_fusion_of_laminae",
       "type": "PathophysiologicalPattern",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "id": "spinal_surgery",
       "type": "TherapeuticApproach",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
-      "id": "study_on_sbo_prevalence",
-      "type": "Evidence",
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "id": "nepean_public_hospital",
+      "id": "study_authors",
       "type": "SourceText",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
-      "id": "westmead_public_hospital",
-      "type": "SourceText",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "id": "prevalence_estimation",
+      "type": "Hypothesis",
+      "properties": {}
     },
     {
       "id": "sbo_occulta",
       "type": "MechanisticConcept",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "id": "prevalence_sbo_in_ds_11_9_percent",
       "type": "Evidence",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "id": "prevalence_sbo_in_is_24_7_percent",
       "type": "Evidence",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "id": "male_to_female_ratio_is_sbo",
       "type": "ContextualFactor",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "id": "male_to_female_ratio_ds_sbo",
       "type": "ContextualFactor",
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "id": "sbo_increases_ds_risk",
-      "type": "Hypothesis",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "id": "article_authors",
       "type": "SourceText",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
+    },
+    {
+      "id": "sbo_increases_ds_risk",
+      "type": "Hypothesis",
+      "properties": {}
+    },
+    {
+      "id": "sbo_increases_is_risk",
+      "type": "Hypothesis",
+      "properties": {}
     },
     {
       "id": "absence_of_s1_spinous_process",
       "type": "AnatomicalStructure",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
+    },
+    {
+      "id": "open_posterior_lumbar_spine_fusion",
+      "type": "TherapeuticApproach",
+      "properties": {}
+    },
+    {
+      "id": "navigated_spinous_process_clamps",
+      "type": "TherapeuticApproach",
+      "properties": {}
     },
     {
       "id": "unintended_durotomy",
       "type": "HealthOutcome",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "id": "neurological_damage",
       "type": "HealthOutcome",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "id": "sbo_increases_ds_risk_hypothesis",
       "type": "Hypothesis",
       "properties": {
-        "source": "langchain_extracted"
+        "source": "langchain_extracted",
+        "original_term": "sbo increases ds risk"
       }
     },
     {
-      "id": "prevalence_sbo_in_isthmic_or_ds",
-      "type": "Evidence",
+      "id": "sbo_increases_is_risk_hypothesis",
+      "type": "Hypothesis",
       "properties": {
-        "source": "langchain_extracted"
+        "source": "langchain_extracted",
+        "original_term": "sbo increases is risk"
       }
+    },
+    {
+      "id": "sbo_prevalence_in_isthmic_or_ds",
+      "type": "Evidence",
+      "properties": {}
     },
     {
       "id": "al_witri_and_li",
       "type": "SourceText",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "id": "vertebra",
       "type": "AnatomicalStructure",
       "properties": {
-        "source": "langchain_extracted"
+        "umls_cui": "C5441567",
+        "umls_semantic_type": "Unknown",
+        "umls_preferred_name": "Bone structure of vertebra"
       }
     },
     {
       "id": "prevalence_sbo_in_adults_12_4_percent",
       "type": "Evidence",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
-      "id": "prevalence_sbo_in_spondylolysis_22_70_percent",
+      "id": "prevalence_sbo_in_spondylolysis_22_to_70_percent",
       "type": "Evidence",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
+    },
+    {
+      "id": "prevalence_sbo_in_ds_unreported",
+      "type": "Evidence",
+      "properties": {}
     },
     {
       "id": "l4_l5",
       "type": "AnatomicalStructure",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "id": "l5_s1",
       "type": "AnatomicalStructure",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "id": "unintended_durotomy_risk",
       "type": "HealthOutcome",
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "id": "sbo_recognition_during_surgery",
-      "type": "TherapeuticApproach",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "id": "unintended_durotomy_risk_hypothesis",
       "type": "Hypothesis",
       "properties": {
-        "source": "langchain_extracted"
+        "source": "langchain_extracted",
+        "original_term": "unintended durotomy risk"
       }
     },
     {
       "id": "prevalence_sbo_with_spondylolisthesis_14_9_percent",
       "type": "Evidence",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "id": "prevalence_sbo_with_degenerative_spondylolisthesis_11_9_percent",
       "type": "Evidence",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "id": "prevalence_sbo_with_isthmic_spondylolisthesis_24_7_percent",
       "type": "Evidence",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "id": "prevalence_sbo_in_general_population_7_4_to_12_4_percent",
       "type": "Evidence",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "id": "prevalence_sbo_in_surgical_cohort_14_9_percent",
       "type": "Evidence",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "id": "increased_awareness_for_safe_surgery",
       "type": "TherapeuticApproach",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
-      "id": "careful_examination_of_preoperative_imaging",
+      "id": "careful_examination_of_pre_operative_imaging",
       "type": "DiagnosticMethod",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "id": "navigated_instrumentation_and_spinal_process_clamps",
       "type": "TherapeuticApproach",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "id": "absence_of_spinous_process",
       "type": "AnatomicalStructure",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
+    },
+    {
+      "id": "effective_surgical_planning",
+      "type": "TherapeuticOutcome",
+      "properties": {}
     },
     {
       "id": "increased_awareness_for_safe_surgery_hypothesis",
       "type": "Hypothesis",
       "properties": {
-        "source": "langchain_extracted"
+        "source": "langchain_extracted",
+        "original_term": "increased awareness for safe surgery"
+      }
+    },
+    {
+      "id": "effective_surgical_planning_hypothesis",
+      "type": "Hypothesis",
+      "properties": {
+        "source": "langchain_extracted",
+        "original_term": "effective surgical planning"
       }
     },
     {
       "id": "prevalence_sbo_in_surgical_cohort",
       "type": "Evidence",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "id": "surgical_patients_with_ds_or_is",
       "type": "ContextualFactor",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
-      "id": "neurosurgeons_and_orthopaedic_spine_surgeons",
-      "type": "PractitionerRole",
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "id": "spinal_levels_L4_S1",
-      "type": "AnatomicalStructure",
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "id": "strobe_reporting_checklist",
+      "id": "strobe_checklist",
       "type": "SourceText",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
+    },
+    {
+      "id": "neurosurgeons",
+      "type": "PractitionerRole",
+      "properties": {}
+    },
+    {
+      "id": "orthopaedic_spine_surgeons",
+      "type": "PractitionerRole",
+      "properties": {}
+    },
+    {
+      "id": "spinal_surgeries_l4_s1",
+      "type": "TherapeuticApproach",
+      "properties": {}
+    },
+    {
+      "id": "surgical_cohort",
+      "type": "ContextualFactor",
+      "properties": {}
+    },
+    {
+      "id": "sbo_awareness",
+      "type": "Hypothesis",
+      "properties": {}
+    },
+    {
+      "id": "electronic_medical_records",
+      "type": "SourceText",
+      "properties": {}
+    },
+    {
+      "id": "baseline_demographic_data",
+      "type": "Evidence",
+      "properties": {}
+    },
+    {
+      "id": "imaging_xrays_ct_mri",
+      "type": "DiagnosticMethod",
+      "properties": {}
+    },
+    {
+      "id": "wiltse_classification",
+      "type": "MechanisticConcept",
+      "properties": {}
+    },
+    {
+      "id": "meyerding_grading",
+      "type": "MechanisticConcept",
+      "properties": {}
     },
     {
       "id": "sbo",
-      "type": "MechanisticConcept",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "type": "AnatomicalStructure",
+      "properties": {}
     },
     {
       "id": "spinal_lipoma",
-      "type": "Evidence",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "type": "PathophysiologicalPattern",
+      "properties": {}
     },
     {
       "id": "limited_dorsal_myeloschisis",
-      "type": "Evidence",
+      "type": "PathophysiologicalPattern",
       "properties": {
-        "source": "langchain_extracted"
+        "umls_cui": "C5781237",
+        "umls_semantic_type": "Unknown",
+        "umls_preferred_name": "Limited dorsal myeloschisis"
       }
     },
     {
       "id": "dermal_sinus",
-      "type": "Evidence",
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "id": "x_ray",
-      "type": "DiagnosticMethod",
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "id": "ct_scan",
-      "type": "DiagnosticMethod",
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "id": "mri",
-      "type": "DiagnosticMethod",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "type": "PathophysiologicalPattern",
+      "properties": {}
     },
     {
       "id": "pacs",
       "type": "SourceText",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "id": "private_radiology_providers",
+      "type": "PractitionerRole",
+      "properties": {}
+    },
+    {
+      "id": "ame_publishing_company",
       "type": "SourceText",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
-      "id": "wiltse_classification",
-      "type": "DiagnosticMethod",
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "id": "meyerding_grading",
-      "type": "DiagnosticMethod",
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "id": "j_spine_surg_2025",
+      "type": "SourceText",
+      "properties": {}
     }
   ],
   "relationships": [
@@ -447,9 +407,7 @@
       },
       "type": "associated_with",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
@@ -462,9 +420,7 @@
       },
       "type": "associated_with",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
@@ -472,14 +428,38 @@
         "type": "DiagnosticMethod"
       },
       "object": {
-        "id": "consecutive_surgical_patients",
-        "type": "ContextualFactor"
+        "id": "occult_spina_bifida",
+        "type": "MechanisticConcept"
       },
-      "type": "described_in",
+      "type": "measured_by",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
+    },
+    {
+      "subject": {
+        "id": "retrospective_radiographic_review",
+        "type": "DiagnosticMethod"
+      },
+      "object": {
+        "id": "isthmic_spondylolisthesis",
+        "type": "Evidence"
+      },
+      "type": "measured_by",
+      "timestamp": null,
+      "properties": {}
+    },
+    {
+      "subject": {
+        "id": "retrospective_radiographic_review",
+        "type": "DiagnosticMethod"
+      },
+      "object": {
+        "id": "degenerative_spondylolisthesis",
+        "type": "Evidence"
+      },
+      "type": "measured_by",
+      "timestamp": null,
+      "properties": {}
     },
     {
       "subject": {
@@ -492,9 +472,7 @@
       },
       "type": "documented_by",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
@@ -507,9 +485,7 @@
       },
       "type": "documented_by",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
@@ -582,9 +558,7 @@
       },
       "type": "associated_with",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
@@ -595,11 +569,9 @@
         "id": "incomplete_fusion_of_laminae",
         "type": "PathophysiologicalPattern"
       },
-      "type": "associated_with",
+      "type": "characterized_by",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
@@ -610,11 +582,9 @@
         "id": "spinal_surgery",
         "type": "TherapeuticApproach"
       },
-      "type": "indicates",
+      "type": "undergoes",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
@@ -625,71 +595,22 @@
         "id": "spinal_surgery",
         "type": "TherapeuticApproach"
       },
-      "type": "indicates",
+      "type": "undergoes",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
-        "id": "study_on_sbo_prevalence",
-        "type": "Evidence"
+        "id": "prevalence_estimation",
+        "type": "Hypothesis"
       },
       "object": {
-        "id": "spina_bifida_occulta",
-        "type": "MechanisticConcept"
-      },
-      "type": "supports",
-      "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "subject": {
-        "id": "study_on_sbo_prevalence",
-        "type": "Evidence"
-      },
-      "object": {
-        "id": "degenerative_spondylolisthesis",
-        "type": "Evidence"
-      },
-      "type": "supports",
-      "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "subject": {
-        "id": "anmar_al_witri",
-        "type": "PractitionerRole"
-      },
-      "object": {
-        "id": "nepean_public_hospital",
+        "id": "study_authors",
         "type": "SourceText"
       },
       "type": "documented_by",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "subject": {
-        "id": "yingda_li",
-        "type": "PractitionerRole"
-      },
-      "object": {
-        "id": "westmead_public_hospital",
-        "type": "SourceText"
-      },
-      "type": "documented_by",
-      "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
@@ -697,22 +618,7 @@
         "type": "Evidence"
       },
       "object": {
-        "id": "nepean_public_hospital",
-        "type": "SourceText"
-      },
-      "type": "cites",
-      "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "subject": {
-        "id": "spondylolisthesis",
-        "type": "Evidence"
-      },
-      "object": {
-        "id": "westmead_public_hospital",
+        "id": "study_authors",
         "type": "SourceText"
       },
       "type": "cites",
@@ -727,22 +633,7 @@
         "type": "Evidence"
       },
       "object": {
-        "id": "nepean_public_hospital",
-        "type": "SourceText"
-      },
-      "type": "cites",
-      "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "subject": {
-        "id": "degenerative_spondylolisthesis",
-        "type": "Evidence"
-      },
-      "object": {
-        "id": "westmead_public_hospital",
+        "id": "study_authors",
         "type": "SourceText"
       },
       "type": "cites",
@@ -757,52 +648,7 @@
         "type": "Evidence"
       },
       "object": {
-        "id": "nepean_public_hospital",
-        "type": "SourceText"
-      },
-      "type": "cites",
-      "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "subject": {
-        "id": "isthmic_spondylolisthesis",
-        "type": "Evidence"
-      },
-      "object": {
-        "id": "westmead_public_hospital",
-        "type": "SourceText"
-      },
-      "type": "cites",
-      "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "subject": {
-        "id": "study_on_sbo_prevalence",
-        "type": "Evidence"
-      },
-      "object": {
-        "id": "nepean_public_hospital",
-        "type": "SourceText"
-      },
-      "type": "cites",
-      "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "subject": {
-        "id": "study_on_sbo_prevalence",
-        "type": "Evidence"
-      },
-      "object": {
-        "id": "westmead_public_hospital",
+        "id": "study_authors",
         "type": "SourceText"
       },
       "type": "cites",
@@ -822,9 +668,7 @@
       },
       "type": "associated_with",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
@@ -837,9 +681,7 @@
       },
       "type": "associated_with",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
@@ -852,9 +694,20 @@
       },
       "type": "supports",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
+    },
+    {
+      "subject": {
+        "id": "prevalence_sbo_in_is_24_7_percent",
+        "type": "Evidence"
+      },
+      "object": {
+        "id": "sbo_increases_is_risk",
+        "type": "Hypothesis"
+      },
+      "type": "supports",
+      "timestamp": null,
+      "properties": {}
     },
     {
       "subject": {
@@ -867,9 +720,7 @@
       },
       "type": "cites",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
@@ -882,9 +733,7 @@
       },
       "type": "cites",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
@@ -897,9 +746,7 @@
       },
       "type": "associated_with",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
@@ -912,9 +759,7 @@
       },
       "type": "associated_with",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
@@ -927,13 +772,11 @@
       },
       "type": "contraindicated_in",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
-        "id": "spinal_surgery",
+        "id": "open_posterior_lumbar_spine_fusion",
         "type": "TherapeuticApproach"
       },
       "object": {
@@ -942,13 +785,11 @@
       },
       "type": "results_in",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
-        "id": "spinal_surgery",
+        "id": "open_posterior_lumbar_spine_fusion",
         "type": "TherapeuticApproach"
       },
       "object": {
@@ -957,9 +798,20 @@
       },
       "type": "results_in",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
+    },
+    {
+      "subject": {
+        "id": "navigated_spinous_process_clamps",
+        "type": "TherapeuticApproach"
+      },
+      "object": {
+        "id": "absence_of_s1_spinous_process",
+        "type": "AnatomicalStructure"
+      },
+      "type": "contraindicated_in",
+      "timestamp": null,
+      "properties": {}
     },
     {
       "subject": {
@@ -978,42 +830,12 @@
     },
     {
       "subject": {
-        "id": "degenerative_spondylolisthesis",
-        "type": "Evidence"
+        "id": "sbo_increases_is_risk",
+        "type": "Hypothesis"
       },
       "object": {
-        "id": "article_authors",
-        "type": "SourceText"
-      },
-      "type": "cites",
-      "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "subject": {
-        "id": "isthmic_spondylolisthesis",
-        "type": "Evidence"
-      },
-      "object": {
-        "id": "article_authors",
-        "type": "SourceText"
-      },
-      "type": "cites",
-      "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "subject": {
-        "id": "prevalence_sbo_in_isthmic_or_ds",
-        "type": "Evidence"
-      },
-      "object": {
-        "id": "sbo_occulta",
-        "type": "MechanisticConcept"
+        "id": "sbo_increases_is_risk_hypothesis",
+        "type": "Hypothesis"
       },
       "type": "supports",
       "timestamp": null,
@@ -1023,7 +845,37 @@
     },
     {
       "subject": {
-        "id": "prevalence_sbo_in_isthmic_or_ds",
+        "id": "degenerative_spondylolisthesis",
+        "type": "Evidence"
+      },
+      "object": {
+        "id": "article_authors",
+        "type": "SourceText"
+      },
+      "type": "cites",
+      "timestamp": null,
+      "properties": {
+        "source": "langchain_extracted"
+      }
+    },
+    {
+      "subject": {
+        "id": "isthmic_spondylolisthesis",
+        "type": "Evidence"
+      },
+      "object": {
+        "id": "article_authors",
+        "type": "SourceText"
+      },
+      "type": "cites",
+      "timestamp": null,
+      "properties": {
+        "source": "langchain_extracted"
+      }
+    },
+    {
+      "subject": {
+        "id": "sbo_prevalence_in_isthmic_or_ds",
         "type": "Evidence"
       },
       "object": {
@@ -1032,9 +884,7 @@
       },
       "type": "cites",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
@@ -1077,99 +927,85 @@
       },
       "type": "associated_with",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
-        "id": "spondylolisthesis",
-        "type": "Evidence"
+        "id": "sbo_occulta",
+        "type": "MechanisticConcept"
       },
       "object": {
-        "id": "vertebra",
-        "type": "AnatomicalStructure"
-      },
-      "type": "associated_with",
-      "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "subject": {
         "id": "prevalence_sbo_in_adults_12_4_percent",
         "type": "Evidence"
       },
-      "object": {
-        "id": "sbo_occulta",
-        "type": "MechanisticConcept"
-      },
-      "type": "supports",
+      "type": "corroborates",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
-        "id": "prevalence_sbo_in_spondylolysis_22_70_percent",
+        "id": "sbo_occulta",
+        "type": "MechanisticConcept"
+      },
+      "object": {
+        "id": "prevalence_sbo_in_spondylolysis_22_to_70_percent",
+        "type": "Evidence"
+      },
+      "type": "corroborates",
+      "timestamp": null,
+      "properties": {}
+    },
+    {
+      "subject": {
+        "id": "sbo_occulta",
+        "type": "MechanisticConcept"
+      },
+      "object": {
+        "id": "prevalence_sbo_in_ds_unreported",
+        "type": "Evidence"
+      },
+      "type": "corroborates",
+      "timestamp": null,
+      "properties": {}
+    },
+    {
+      "subject": {
+        "id": "spondylolisthesis",
         "type": "Evidence"
       },
       "object": {
-        "id": "sbo_occulta",
-        "type": "MechanisticConcept"
-      },
-      "type": "supports",
-      "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "subject": {
         "id": "l4_l5",
         "type": "AnatomicalStructure"
       },
-      "object": {
-        "id": "spondylolisthesis",
-        "type": "Evidence"
-      },
       "type": "associated_with",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
+        "id": "spondylolisthesis",
+        "type": "Evidence"
+      },
+      "object": {
         "id": "l5_s1",
         "type": "AnatomicalStructure"
       },
-      "object": {
-        "id": "spondylolisthesis",
-        "type": "Evidence"
-      },
       "type": "associated_with",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
-        "id": "sbo_recognition_during_surgery",
-        "type": "TherapeuticApproach"
+        "id": "sbo_occulta",
+        "type": "MechanisticConcept"
       },
       "object": {
         "id": "unintended_durotomy_risk",
         "type": "HealthOutcome"
       },
-      "type": "mitigates",
+      "type": "associated_with",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
@@ -1182,13 +1018,11 @@
       },
       "type": "cites",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
-        "id": "prevalence_sbo_in_spondylolysis_22_70_percent",
+        "id": "prevalence_sbo_in_spondylolysis_22_to_70_percent",
         "type": "Evidence"
       },
       "object": {
@@ -1197,9 +1031,20 @@
       },
       "type": "cites",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
+    },
+    {
+      "subject": {
+        "id": "prevalence_sbo_in_ds_unreported",
+        "type": "Evidence"
+      },
+      "object": {
+        "id": "article_authors",
+        "type": "SourceText"
+      },
+      "type": "cites",
+      "timestamp": null,
+      "properties": {}
     },
     {
       "subject": {
@@ -1242,9 +1087,7 @@
       },
       "type": "associated_with",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
@@ -1257,9 +1100,7 @@
       },
       "type": "associated_with",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
@@ -1272,9 +1113,7 @@
       },
       "type": "associated_with",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
@@ -1287,9 +1126,7 @@
       },
       "type": "supports",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
@@ -1302,9 +1139,7 @@
       },
       "type": "supports",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
@@ -1317,9 +1152,7 @@
       },
       "type": "supports",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
@@ -1332,9 +1165,7 @@
       },
       "type": "supports",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
@@ -1347,9 +1178,7 @@
       },
       "type": "supports",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
@@ -1357,29 +1186,25 @@
         "type": "TherapeuticApproach"
       },
       "object": {
-        "id": "spina_bifida_occulta",
-        "type": "MechanisticConcept"
+        "id": "effective_surgical_planning",
+        "type": "TherapeuticOutcome"
       },
-      "type": "targets",
+      "type": "results_in",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
-        "id": "careful_examination_of_preoperative_imaging",
+        "id": "careful_examination_of_pre_operative_imaging",
         "type": "DiagnosticMethod"
       },
       "object": {
-        "id": "spina_bifida_occulta",
-        "type": "MechanisticConcept"
+        "id": "effective_surgical_planning",
+        "type": "TherapeuticOutcome"
       },
-      "type": "targets",
+      "type": "results_in",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
@@ -1392,9 +1217,7 @@
       },
       "type": "targets",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
@@ -1413,12 +1236,12 @@
     },
     {
       "subject": {
-        "id": "prevalence_sbo_in_surgical_cohort",
-        "type": "Evidence"
+        "id": "effective_surgical_planning",
+        "type": "TherapeuticOutcome"
       },
       "object": {
-        "id": "sbo_occulta",
-        "type": "MechanisticConcept"
+        "id": "effective_surgical_planning_hypothesis",
+        "type": "Hypothesis"
       },
       "type": "supports",
       "timestamp": null,
@@ -1432,29 +1255,12 @@
         "type": "Evidence"
       },
       "object": {
-        "id": "surgical_patients_with_ds_or_is",
-        "type": "ContextualFactor"
+        "id": "sbo_awareness",
+        "type": "Hypothesis"
       },
-      "type": "described_in",
+      "type": "supports",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "subject": {
-        "id": "neurosurgeons_and_orthopaedic_spine_surgeons",
-        "type": "PractitionerRole"
-      },
-      "object": {
-        "id": "spinal_levels_L4_S1",
-        "type": "AnatomicalStructure"
-      },
-      "type": "administered_by",
-      "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
@@ -1467,24 +1273,59 @@
       },
       "type": "cites",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
-        "id": "prevalence_sbo_in_surgical_cohort",
-        "type": "Evidence"
+        "id": "surgical_patients_with_ds_or_is",
+        "type": "ContextualFactor"
       },
       "object": {
-        "id": "strobe_reporting_checklist",
+        "id": "spinal_surgeries_l4_s1",
+        "type": "TherapeuticApproach"
+      },
+      "type": "associated_with",
+      "timestamp": null,
+      "properties": {}
+    },
+    {
+      "subject": {
+        "id": "neurosurgeons",
+        "type": "PractitionerRole"
+      },
+      "object": {
+        "id": "spinal_surgeries_l4_s1",
+        "type": "TherapeuticApproach"
+      },
+      "type": "administered_by",
+      "timestamp": null,
+      "properties": {}
+    },
+    {
+      "subject": {
+        "id": "orthopaedic_spine_surgeons",
+        "type": "PractitionerRole"
+      },
+      "object": {
+        "id": "spinal_surgeries_l4_s1",
+        "type": "TherapeuticApproach"
+      },
+      "type": "administered_by",
+      "timestamp": null,
+      "properties": {}
+    },
+    {
+      "subject": {
+        "id": "article_authors",
+        "type": "SourceText"
+      },
+      "object": {
+        "id": "strobe_checklist",
         "type": "SourceText"
       },
       "type": "cites",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
@@ -1492,7 +1333,7 @@
         "type": "Evidence"
       },
       "object": {
-        "id": "strobe_reporting_checklist",
+        "id": "strobe_checklist",
         "type": "SourceText"
       },
       "type": "cites",
@@ -1507,7 +1348,7 @@
         "type": "Evidence"
       },
       "object": {
-        "id": "strobe_reporting_checklist",
+        "id": "strobe_checklist",
         "type": "SourceText"
       },
       "type": "cites",
@@ -1518,14 +1359,14 @@
     },
     {
       "subject": {
-        "id": "spondylolisthesis",
+        "id": "prevalence_sbo_in_surgical_cohort",
         "type": "Evidence"
       },
       "object": {
-        "id": "sbo",
-        "type": "MechanisticConcept"
+        "id": "strobe_checklist",
+        "type": "SourceText"
       },
-      "type": "associated_with",
+      "type": "cites",
       "timestamp": null,
       "properties": {
         "source": "langchain_extracted"
@@ -1533,7 +1374,20 @@
     },
     {
       "subject": {
-        "id": "x_ray",
+        "id": "electronic_medical_records",
+        "type": "SourceText"
+      },
+      "object": {
+        "id": "baseline_demographic_data",
+        "type": "Evidence"
+      },
+      "type": "documented_by",
+      "timestamp": null,
+      "properties": {}
+    },
+    {
+      "subject": {
+        "id": "imaging_xrays_ct_mri",
         "type": "DiagnosticMethod"
       },
       "object": {
@@ -1542,39 +1396,7 @@
       },
       "type": "measured_by",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "subject": {
-        "id": "ct_scan",
-        "type": "DiagnosticMethod"
-      },
-      "object": {
-        "id": "spondylolisthesis",
-        "type": "Evidence"
-      },
-      "type": "measured_by",
-      "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "subject": {
-        "id": "mri",
-        "type": "DiagnosticMethod"
-      },
-      "object": {
-        "id": "spondylolisthesis",
-        "type": "Evidence"
-      },
-      "type": "measured_by",
-      "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
@@ -1583,13 +1405,11 @@
       },
       "object": {
         "id": "wiltse_classification",
-        "type": "DiagnosticMethod"
+        "type": "MechanisticConcept"
       },
       "type": "classified_by",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
@@ -1598,13 +1418,63 @@
       },
       "object": {
         "id": "meyerding_grading",
-        "type": "DiagnosticMethod"
+        "type": "MechanisticConcept"
       },
       "type": "graded_by",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
+    },
+    {
+      "subject": {
+        "id": "imaging_xrays_ct_mri",
+        "type": "DiagnosticMethod"
+      },
+      "object": {
+        "id": "sbo",
+        "type": "AnatomicalStructure"
+      },
+      "type": "measured_by",
+      "timestamp": null,
+      "properties": {}
+    },
+    {
+      "subject": {
+        "id": "imaging_xrays_ct_mri",
+        "type": "DiagnosticMethod"
+      },
+      "object": {
+        "id": "spinal_lipoma",
+        "type": "PathophysiologicalPattern"
+      },
+      "type": "measured_by",
+      "timestamp": null,
+      "properties": {}
+    },
+    {
+      "subject": {
+        "id": "imaging_xrays_ct_mri",
+        "type": "DiagnosticMethod"
+      },
+      "object": {
+        "id": "limited_dorsal_myeloschisis",
+        "type": "PathophysiologicalPattern"
+      },
+      "type": "measured_by",
+      "timestamp": null,
+      "properties": {}
+    },
+    {
+      "subject": {
+        "id": "imaging_xrays_ct_mri",
+        "type": "DiagnosticMethod"
+      },
+      "object": {
+        "id": "dermal_sinus",
+        "type": "PathophysiologicalPattern"
+      },
+      "type": "measured_by",
+      "timestamp": null,
+      "properties": {}
     },
     {
       "subject": {
@@ -1612,25 +1482,49 @@
         "type": "SourceText"
       },
       "object": {
-        "id": "spondylolisthesis",
-        "type": "Evidence"
+        "id": "imaging_xrays_ct_mri",
+        "type": "DiagnosticMethod"
       },
       "type": "documented_by",
       "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
+      "properties": {}
     },
     {
       "subject": {
         "id": "private_radiology_providers",
+        "type": "PractitionerRole"
+      },
+      "object": {
+        "id": "imaging_xrays_ct_mri",
+        "type": "DiagnosticMethod"
+      },
+      "type": "administered_by",
+      "timestamp": null,
+      "properties": {}
+    },
+    {
+      "subject": {
+        "id": "ame_publishing_company",
         "type": "SourceText"
       },
       "object": {
-        "id": "spondylolisthesis",
+        "id": "j_spine_surg_2025",
+        "type": "SourceText"
+      },
+      "type": "published_by",
+      "timestamp": null,
+      "properties": {}
+    },
+    {
+      "subject": {
+        "id": "baseline_demographic_data",
         "type": "Evidence"
       },
-      "type": "documented_by",
+      "object": {
+        "id": "electronic_medical_records",
+        "type": "SourceText"
+      },
+      "type": "cites",
       "timestamp": null,
       "properties": {
         "source": "langchain_extracted"
@@ -1638,12 +1532,57 @@
     },
     {
       "subject": {
-        "id": "article_authors",
-        "type": "SourceText"
+        "id": "baseline_demographic_data",
+        "type": "Evidence"
       },
       "object": {
+        "id": "pacs",
+        "type": "SourceText"
+      },
+      "type": "cites",
+      "timestamp": null,
+      "properties": {
+        "source": "langchain_extracted"
+      }
+    },
+    {
+      "subject": {
+        "id": "baseline_demographic_data",
+        "type": "Evidence"
+      },
+      "object": {
+        "id": "ame_publishing_company",
+        "type": "SourceText"
+      },
+      "type": "cites",
+      "timestamp": null,
+      "properties": {
+        "source": "langchain_extracted"
+      }
+    },
+    {
+      "subject": {
+        "id": "baseline_demographic_data",
+        "type": "Evidence"
+      },
+      "object": {
+        "id": "j_spine_surg_2025",
+        "type": "SourceText"
+      },
+      "type": "cites",
+      "timestamp": null,
+      "properties": {
+        "source": "langchain_extracted"
+      }
+    },
+    {
+      "subject": {
         "id": "spondylolisthesis",
         "type": "Evidence"
+      },
+      "object": {
+        "id": "electronic_medical_records",
+        "type": "SourceText"
       },
       "type": "cites",
       "timestamp": null,
@@ -1672,7 +1611,7 @@
         "type": "Evidence"
       },
       "object": {
-        "id": "private_radiology_providers",
+        "id": "ame_publishing_company",
         "type": "SourceText"
       },
       "type": "cites",
@@ -1683,131 +1622,11 @@
     },
     {
       "subject": {
-        "id": "spinal_lipoma",
+        "id": "spondylolisthesis",
         "type": "Evidence"
       },
       "object": {
-        "id": "pacs",
-        "type": "SourceText"
-      },
-      "type": "cites",
-      "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "subject": {
-        "id": "spinal_lipoma",
-        "type": "Evidence"
-      },
-      "object": {
-        "id": "private_radiology_providers",
-        "type": "SourceText"
-      },
-      "type": "cites",
-      "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "subject": {
-        "id": "spinal_lipoma",
-        "type": "Evidence"
-      },
-      "object": {
-        "id": "article_authors",
-        "type": "SourceText"
-      },
-      "type": "cites",
-      "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "subject": {
-        "id": "limited_dorsal_myeloschisis",
-        "type": "Evidence"
-      },
-      "object": {
-        "id": "pacs",
-        "type": "SourceText"
-      },
-      "type": "cites",
-      "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "subject": {
-        "id": "limited_dorsal_myeloschisis",
-        "type": "Evidence"
-      },
-      "object": {
-        "id": "private_radiology_providers",
-        "type": "SourceText"
-      },
-      "type": "cites",
-      "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "subject": {
-        "id": "limited_dorsal_myeloschisis",
-        "type": "Evidence"
-      },
-      "object": {
-        "id": "article_authors",
-        "type": "SourceText"
-      },
-      "type": "cites",
-      "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "subject": {
-        "id": "dermal_sinus",
-        "type": "Evidence"
-      },
-      "object": {
-        "id": "pacs",
-        "type": "SourceText"
-      },
-      "type": "cites",
-      "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "subject": {
-        "id": "dermal_sinus",
-        "type": "Evidence"
-      },
-      "object": {
-        "id": "private_radiology_providers",
-        "type": "SourceText"
-      },
-      "type": "cites",
-      "timestamp": null,
-      "properties": {
-        "source": "langchain_extracted"
-      }
-    },
-    {
-      "subject": {
-        "id": "dermal_sinus",
-        "type": "Evidence"
-      },
-      "object": {
-        "id": "article_authors",
+        "id": "j_spine_surg_2025",
         "type": "SourceText"
       },
       "type": "cites",
