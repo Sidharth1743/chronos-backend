@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Document Analysis</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+        .main-container {
+            display: flex;
+            gap: 20px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+        .left-panel {
+            flex: 1;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .right-panel {
+            flex: 1;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .pdf-container {
+            width: 100%;
+            height: 800px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .graph-container {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            position: relative;
+            background-color: #ffffff;
+        }
+        .back-button {
+            margin-bottom: 20px;
+        }
+        .back-button a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+        .info-section {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .node {
+            fill: #66b2ff;
+            stroke: #004d99;
+            stroke-width: 1.5px;
+            cursor: pointer;
+        }
+        .node:hover {
+            fill: #004d99;
+        }
+        .link {
+            stroke: #999;
+            stroke-opacity: 0.6;
+            stroke-width: 1px;
+        }
+        .node-label {
+            font-size: 12px;
+            font-family: Arial;
+            pointer-events: none;
+            fill: #333;
+            text-anchor: middle;
+        }
+        .link-label {
+            font-size: 10px;
+            font-family: Arial;
+            pointer-events: none;
+            fill: #666;
+            text-anchor: middle;
+        }
+    </style>
+</head>
+<body>
+    <div class="back-button">
+        <a href="{{ url_for('upload_file') }}">← Back to Upload</a>
+    </div>
+    
+    <div class="main-container">
+        <div class="left-panel">
+            <h2>PDF Document</h2>
+            <div class="pdf-container">
+                <iframe 
+                    src="{{ url_for('uploaded_file', filename=filename) }}"
+                    type="application/pdf"
+                    width="100%"
+                    height="100%">
+                    <p>It appears your browser doesn't support embedded PDFs. 
+                       <a href="{{ url_for('uploaded_file', filename=filename) }}">Click here to download the PDF</a>
+                    </p>
+                </iframe>
+            </div>
+            
+            {% if pinata_link %}
+            <div class="info-section">
+                <h3>IPFS Link (Pinata)</h3>
+                <a href="{{ pinata_link }}" target="_blank">View on IPFS</a>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="right-panel">
+            <h2>Knowledge Graph</h2>
+            <div id="knowledge-graph" class="graph-container"></div>
+        </div>
+    </div>
+
+    <script>
+        console.log('Graph Data:', {{ graph_data|safe }});  // Debug line
+        const graphData = {{ graph_data|safe }};
+        
+        if (graphData && graphData.nodes && graphData.nodes.length > 0) {
+            const width = document.getElementById('knowledge-graph').clientWidth;
+            const height = document.getElementById('knowledge-graph').clientHeight;
+
+            // Create SVG container
+            const svg = d3.select('#knowledge-graph')
+                .append('svg')
+                .attr('width', width)
+                .attr('height', height);
+
+            // Create zoom behavior
+            const zoom = d3.zoom()
+                .scaleExtent([0.1, 4])
+                .on('zoom', () => {
+                    container.attr('transform', d3.event.transform);
+                });
+
+            svg.call(zoom);
+
+            // Create container for the graph
+            const container = svg.append('g');
+
+            // Create the simulation
+            const simulation = d3.forceSimulation(graphData.nodes)
+                .force('link', d3.forceLink(graphData.links).id(d => d.id).distance(100))
+                .force('charge', d3.forceManyBody().strength(-500))
+                .force('center', d3.forceCenter(width / 2, height / 2))
+                .force('collision', d3.forceCollide().radius(50));
+
+            // Draw the links
+            const link = container.append('g')
+                .selectAll('line')
+                .data(graphData.links)
+                .enter()
+                .append('line')
+                .attr('class', 'link');
+
+            // Draw the nodes
+            const node = container.append('g')
+                .selectAll('circle')
+                .data(graphData.nodes)
+                .enter()
+                .append('circle')
+                .attr('class', 'node')
+                .attr('r', 15)
+                .attr('title', d => d.title);
+
+            // Add node labels
+            const nodeLabels = container.append('g')
+                .selectAll('text')
+                .data(graphData.nodes)
+                .enter()
+                .append('text')
+                .attr('class', 'node-label')
+                .text(d => d.title)
+                .attr('dy', 25);
+
+            // Add relationship labels
+            const linkLabels = container.append('g')
+                .selectAll('text')
+                .data(graphData.links)
+                .enter()
+                .append('text')
+                .attr('class', 'link-label')
+                .text(d => d.type)
+                .attr('dy', -5);
+
+            // Add drag behavior
+            node.call(d3.drag()
+                .on('start', dragstarted)
+                .on('drag', dragged)
+                .on('end', dragended));
+
+            // Update positions on each tick
+            simulation.on('tick', () => {
+                link
+                    .attr('x1', d => d.source.x)
+                    .attr('y1', d => d.source.y)
+                    .attr('x2', d => d.target.x)
+                    .attr('y2', d => d.target.y);
+
+                node
+                    .attr('cx', d => d.x)
+                    .attr('cy', d => d.y);
+
+                nodeLabels
+                    .attr('x', d => d.x)
+                    .attr('y', d => d.y);
+
+                linkLabels
+                    .attr('x', d => (d.source.x + d.target.x) / 2)
+                    .attr('y', d => (d.source.y + d.target.y) / 2);
+            });
+
+            // Drag functions
+            function dragstarted(d) {
+                if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+                d.fx = d.x;
+                d.fy = d.y;
+            }
+
+            function dragged(d) {
+                d.fx = d3.event.x;
+                d.fy = d3.event.y;
+            }
+
+            function dragended(d) {
+                if (!d3.event.active) simulation.alphaTarget(0);
+                d.fx = null;
+                d.fy = null;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -25,10 +25,70 @@
         }
         .right-panel {
             flex: 1;
+            display: flex;
+            flex-direction: column;
             background-color: white;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .results-overview {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .overview-section {
+            margin-bottom: 20px;
+        }
+        .overview-section h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .type-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .type-tag {
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            color: #333;
+        }
+        .type-tag .count {
+            margin-left: 6px;
+            background: rgba(255,255,255,0.3);
+            padding: 0 6px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+        .node-details-panel {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            display: none;
+        }
+        .node-details-panel h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .node-details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .node-details-table td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+        .node-details-table td:first-child {
+            font-weight: bold;
+            width: 30%;
         }
         .pdf-container {
             width: 100%;
@@ -123,16 +183,113 @@
         </div>
         
         <div class="right-panel">
-            <h2>Knowledge Graph</h2>
+            <div class="graph-header">
+                <h2>Knowledge Graph</h2>
+                <div class="graph-stats">
+                    <span id="node-count">Nodes: 0</span>
+                    <span id="relationship-count">Relationships: 0</span>
+                </div>
+            </div>
             <div id="knowledge-graph" class="graph-container"></div>
+            <div id="node-details" class="node-details-panel">
+                <h3>Node Details</h3>
+                <table class="node-details-table">
+                    <tbody>
+                        <tr>
+                            <td>Type</td>
+                            <td id="node-type"></td>
+                        </tr>
+                        <tr>
+                            <td>ID</td>
+                            <td id="node-id"></td>
+                        </tr>
+                        <tr>
+                            <td>Properties</td>
+                            <td id="node-properties"></td>
+                        </tr>
+                        <tr>
+                            <td>Relationships</td>
+                            <td id="node-relationships"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <script>
-        console.log('Graph Data:', {{ graph_data|safe }});  // Debug line
         const graphData = {{ graph_data|safe }};
         
+        function getNodeTypeColor(type) {
+            const colors = {
+                'AnatomicalStructure': '#FFE082',
+                'Biomarker': '#81D4FA',
+                'ClinicalObservation': '#80CBC4',
+                'ContextualFactor': '#F48FB1',
+                'DiagnosticMethod': '#CE93D8',
+                'DosageForm': '#FFE082',
+                'Evidence': '#FFCC80',
+                'HealthOutcome': '#90CAF9',
+                'Hypothesis': '#BCAAA4',
+                'MechanisticConcept': '#80CBC4',
+                'PathophysiologicalPattern': '#FFE082',
+                'PractitionerRole': '#B39DDB',
+                'SourceText': '#B39DDB',
+                'TemporalPhase': '#9FA8DA',
+                'TherapeuticApproach': '#FFAB91',
+                'TherapeuticOutcome': '#FFAB91'
+            };
+            return colors[type] || '#66b2ff';
+        }
+
+        function updateResultsOverview() {
+            if (!graphData || !graphData.nodes) return;
+
+            // Update total counts
+            document.getElementById('total-nodes').textContent = graphData.stats.totalNodes;
+            document.getElementById('total-relationships').textContent = graphData.stats.totalRelationships;
+
+            // Count node types
+            const nodeTypeCounts = {};
+            graphData.nodes.forEach(node => {
+                node.labels.forEach(label => {
+                    nodeTypeCounts[label] = (nodeTypeCounts[label] || 0) + 1;
+                });
+            });
+
+            // Count relationship types
+            const relTypeCounts = {};
+            graphData.links.forEach(link => {
+                relTypeCounts[link.type] = (relTypeCounts[link.type] || 0) + 1;
+            });
+
+            // Display node types
+            const nodeTypesContainer = document.getElementById('node-types');
+            nodeTypesContainer.innerHTML = '';
+            Object.entries(nodeTypeCounts).forEach(([type, count]) => {
+                const tag = document.createElement('div');
+                tag.className = 'type-tag';
+                tag.style.backgroundColor = getNodeTypeColor(type);
+                tag.innerHTML = `${type} <span class="count">${count}</span>`;
+                nodeTypesContainer.appendChild(tag);
+            });
+
+            // Display relationship types
+            const relTypesContainer = document.getElementById('relationship-types');
+            relTypesContainer.innerHTML = '';
+            Object.entries(relTypeCounts).forEach(([type, count]) => {
+                const tag = document.createElement('div');
+                tag.className = 'type-tag';
+                tag.style.backgroundColor = '#e9ecef';
+                tag.innerHTML = `${type} <span class="count">${count}</span>`;
+                relTypesContainer.appendChild(tag);
+            });
+        }
+        
         if (graphData && graphData.nodes && graphData.nodes.length > 0) {
+            // Update the results overview
+            updateResultsOverview();
+            
             const width = document.getElementById('knowledge-graph').clientWidth;
             const height = document.getElementById('knowledge-graph').clientHeight;
 
@@ -177,7 +334,30 @@
                 .append('circle')
                 .attr('class', 'node')
                 .attr('r', 15)
-                .attr('title', d => d.title);
+                .attr('title', d => d.title)
+                .style('fill', d => {
+                    // Color nodes based on their type/label
+                    const typeColors = {
+                        'AnatomicalStructure': '#A5D6A7',
+                        'Biomarker': '#81D4FA',
+                        'ClinicalObservation': '#80CBC4',
+                        'ContextualFactor': '#F48FB1',
+                        'DiagnosticMethod': '#CE93D8',
+                        'DosageForm': '#FFE082',
+                        'Evidence': '#FFCC80',
+                        'HealthOutcome': '#90CAF9',
+                        'Hypothesis': '#BCAAA4',
+                        'MechanisticConcept': '#80CBC4',
+                        'PathophysiologicalPattern': '#FFE082',
+                        'PractitionerRole': '#B39DDB',
+                        'SourceText': '#B39DDB',
+                        'TemporalPhase': '#9FA8DA',
+                        'TherapeuticApproach': '#FFAB91',
+                        'TherapeuticOutcome': '#FFAB91'
+                    };
+                    return typeColors[d.labels[0]] || '#66b2ff';
+                })
+                .on('click', showNodeDetails);
 
             // Add node labels
             const nodeLabels = container.append('g')
@@ -243,6 +423,65 @@
                 d.fx = null;
                 d.fy = null;
             }
+
+            // Function to show node details
+            function showNodeDetails(d) {
+                const detailsPanel = document.getElementById('node-details');
+                const nodeType = document.getElementById('node-type');
+                const nodeId = document.getElementById('node-id');
+                const nodeProperties = document.getElementById('node-properties');
+                const nodeRelationships = document.getElementById('node-relationships');
+
+                // Show the panel
+                detailsPanel.style.display = 'block';
+
+                // Update the details
+                nodeType.textContent = d.labels ? d.labels.join(', ') : 'Unknown';
+                nodeId.textContent = d.id;
+
+                // Format properties
+                const props = Object.entries(d.properties || {})
+                    .map(([key, value]) => `${key}: ${value}`)
+                    .join('\n');
+                nodeProperties.textContent = props || 'No properties';
+
+                // Find relationships for this node
+                const rels = graphData.links
+                    .filter(link => link.source.id === d.id || link.target.id === d.id)
+                    .map(link => {
+                        const direction = link.source.id === d.id ? 'OUT' : 'IN';
+                        const otherNode = link.source.id === d.id ? link.target : link.source;
+                        return `${direction}: ${link.type} (${otherNode.title})`;
+                    })
+                    .join('\n');
+                nodeRelationships.textContent = rels || 'No relationships';
+
+                // Highlight the selected node and its connections
+                node.style('opacity', n => n.id === d.id || 
+                    graphData.links.some(link => 
+                        (link.source.id === d.id && link.target.id === n.id) ||
+                        (link.target.id === d.id && link.source.id === n.id)
+                    ) ? 1 : 0.3);
+                
+                link.style('opacity', l => 
+                    l.source.id === d.id || l.target.id === d.id ? 1 : 0.1);
+                
+                nodeLabels.style('opacity', n => n.id === d.id || 
+                    graphData.links.some(link => 
+                        (link.source.id === d.id && link.target.id === n.id) ||
+                        (link.target.id === d.id && link.source.id === n.id)
+                    ) ? 1 : 0.3);
+            }
+
+            // Add click handler for the graph container to reset highlights
+            svg.on('click', function(event) {
+                if (event.target.tagName === 'svg') {
+                    node.style('opacity', 1);
+                    link.style('opacity', 0.6);
+                    nodeLabels.style('opacity', 1);
+                    document.getElementById('node-details').style.display = 'none';
+                }
+            });
         }
     </script>
 </body>
