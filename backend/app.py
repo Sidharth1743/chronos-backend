@@ -84,22 +84,47 @@ def decompress_data(compressed_data):
 
 def store_graph_data(nodes, relationships):
     """Store graph data in session with compression and size optimization."""
-    # Optimize data by removing unnecessary fields
+    # Important properties to keep for medical/scientific knowledge graphs
+    important_properties = [
+        'name', 'type', 'id', 'source',
+        'umls_cui', 'umls_preferred_name', 'umls_semantic_type',
+        'description', 'category', 'label', 'title'
+    ]
+    
+    # Optimize data while preserving important medical information
     optimized_nodes = []
     for node in nodes:
+        # Keep all important properties, truncate only very long values
+        properties = {}
+        for k, v in node.get('properties', {}).items():
+            if k.lower() in [prop.lower() for prop in important_properties]:
+                # Keep important properties, but limit very long text
+                if isinstance(v, str) and len(v) > 200:
+                    properties[k] = v[:200] + '...'
+                else:
+                    properties[k] = v
+            elif len(str(v)) <= 50:  # Keep short properties regardless
+                properties[k] = v
+        
         optimized_nodes.append({
             'id': node['id'],
-            'labels': node['labels'][:1],  # Keep only first label to save space
-            'properties': {k: str(v)[:50] for k, v in node.get('properties', {}).items() if k in ['name', 'type']}  # Keep only essential properties
+            'labels': node['labels'],  # Keep all labels for proper categorization
+            'properties': properties
         })
     
+    # Keep relationship properties but limit size
     optimized_relationships = []
     for rel in relationships:
+        rel_properties = {}
+        for k, v in rel.get('properties', {}).items():
+            if len(str(v)) <= 100:  # Keep reasonably sized relationship properties
+                rel_properties[k] = v
+        
         optimized_relationships.append({
             'source': rel['source'],
             'target': rel['target'],
-            'type': rel['type']
-            # Skip properties to save space
+            'type': rel['type'],
+            'properties': rel_properties
         })
     
     graph_data = {
@@ -111,18 +136,53 @@ def store_graph_data(nodes, relationships):
         }
     }
     
-    # Try to compress and store
+    # Try to compress and store with larger limit for medical data
     compressed = compress_data(graph_data)
-    if compressed and len(compressed) < 3000:  # Leave room for other session data
+    if compressed and len(compressed) < 3500:  # Increased limit for medical properties
         session['graph_data_compressed'] = compressed
         session['has_graph_data'] = True
+        print(f"Graph data compressed to {len(compressed)} bytes and stored in session")
         return True
     else:
-        # If still too large, store only essential info
-        session['graph_stats'] = graph_data['stats']
-        session['has_graph_data'] = False
-        print("Graph data too large for session storage, storing only statistics")
-        return False
+        # If still too large, try with more aggressive optimization
+        print(f"Graph data too large ({len(compressed) if compressed else 'N/A'} bytes), trying aggressive optimization...")
+        
+        # More aggressive optimization - keep only most essential properties
+        essential_props = ['name', 'umls_cui', 'umls_preferred_name', 'type']
+        minimal_nodes = []
+        for node in nodes:
+            properties = {}
+            for k, v in node.get('properties', {}).items():
+                if k.lower() in [prop.lower() for prop in essential_props]:
+                    if isinstance(v, str) and len(v) > 100:
+                        properties[k] = v[:100] + '...'
+                    else:
+                        properties[k] = v
+            
+            minimal_nodes.append({
+                'id': node['id'],
+                'labels': node['labels'][:1],  # Keep only first label
+                'properties': properties
+            })
+        
+        minimal_data = {
+            'nodes': minimal_nodes,
+            'relationships': [{'source': r['source'], 'target': r['target'], 'type': r['type']} for r in optimized_relationships],
+            'stats': graph_data['stats']
+        }
+        
+        compressed_minimal = compress_data(minimal_data)
+        if compressed_minimal and len(compressed_minimal) < 3500:
+            session['graph_data_compressed'] = compressed_minimal
+            session['has_graph_data'] = True
+            print(f"Minimal graph data compressed to {len(compressed_minimal)} bytes and stored in session")
+            return True
+        else:
+            # Last resort - store only statistics
+            session['graph_stats'] = graph_data['stats']
+            session['has_graph_data'] = False
+            print("Graph data too large even with aggressive optimization, storing only statistics")
+            return False
 
 def get_graph_data():
     """Retrieve graph data from session."""
