@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Knowledge Graph</title>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+        .main-container {
+            display: flex;
+            gap: 20px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+        .graph-panel {
+            flex: 2;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .info-panel {
+            flex: 1;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .graph-container {
+            width: 100%;
+            height: 700px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            position: relative;
+            background-color: #ffffff;
+        }
+        .results-overview {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .overview-section {
+            margin-bottom: 20px;
+        }
+        .overview-section h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .type-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .type-tag {
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            color: #333;
+        }
+        .node-details-panel {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        .node-details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        .node-details-table td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+        .node-details-table td:first-child {
+            font-weight: bold;
+            width: 30%;
+        }
+        .node {
+            fill: #66b2ff;
+            stroke: #004d99;
+            stroke-width: 1.5px;
+            cursor: pointer;
+        }
+        .node:hover {
+            fill: #004d99;
+        }
+        .link {
+            stroke: #999;
+            stroke-opacity: 0.6;
+            stroke-width: 1px;
+        }
+        .node-label {
+            font-size: 12px;
+            font-family: Arial;
+            pointer-events: none;
+            fill: #333;
+            text-anchor: middle;
+        }
+        .link-label {
+            font-size: 10px;
+            font-family: Arial;
+            pointer-events: none;
+            fill: #666;
+            text-anchor: middle;
+        }
+        .back-button {
+            margin-bottom: 20px;
+        }
+        .back-button a {
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+        .button {
+            background-color: #007bff;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="back-button">
+        <a href="{{ url_for('upload_file') }}">← Back to Upload</a>
+    </div>
+
+    <div class="main-container">
+        <div class="graph-panel">
+            <h2>Knowledge Graph Visualization</h2>
+            <div id="generate-section" style="text-align: center; padding: 50px;">
+                <h3>Generate Knowledge Graph</h3>
+                <p>Click the button below to generate and visualize the knowledge graph from your processed document.</p>
+                <button id="generate-graph-btn" class="button" style="background-color: #007bff; color: white; padding: 15px 30px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">
+                    Generate Knowledge Graph
+                </button>
+                <div id="loading-message" style="display: none; margin-top: 20px;">
+                    <p>Generating knowledge graph... Please wait.</p>
+                </div>
+            </div>
+            <div id="graph-container" class="graph-container" style="display: none;"></div>
+        </div>
+        
+        <div class="info-panel">
+            <div class="results-overview">
+                <h3>Overall Node Information</h3>
+                <div class="overview-section">
+                    <h4>Nodes (<span id="total-nodes">0</span>)</h4>
+                    <div id="node-types" class="type-tags"></div>
+                </div>
+                <div class="overview-section">
+                    <h4>Relationships (<span id="total-relationships">0</span>)</h4>
+                    <div id="relationship-types" class="type-tags"></div>
+                </div>
+            </div>
+            
+            <div id="node-details" class="node-details-panel">
+                <h3>Specific Node Information</h3>
+                <table id="node-details-table" class="node-details-table">
+                    <tr><td colspan="2">Click on a node to view its details</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // D3.js graph implementation
+        function initializeGraph(data) {
+            const width = document.getElementById('graph-container').offsetWidth;
+            const height = document.getElementById('graph-container').offsetHeight;
+            
+            // Create SVG container
+            const svg = d3.select('#graph-container')
+                .append('svg')
+                .attr('width', width)
+                .attr('height', height);
+
+            // Create force simulation
+            const simulation = d3.forceSimulation(data.nodes)
+                .force('link', d3.forceLink(data.relationships)
+                    .id(d => d.id)
+                    .distance(100))
+                .force('charge', d3.forceManyBody().strength(-300))
+                .force('center', d3.forceCenter(width / 2, height / 2));
+
+            // Create links
+            const link = svg.append('g')
+                .selectAll('line')
+                .data(data.relationships)
+                .enter()
+                .append('line')
+                .attr('class', 'link');
+
+            // Create link labels
+            const linkLabel = svg.append('g')
+                .selectAll('.link-label')
+                .data(data.relationships)
+                .enter()
+                .append('text')
+                .attr('class', 'link-label')
+                .text(d => d.type);
+
+            // Create nodes
+            const node = svg.append('g')
+                .selectAll('circle')
+                .data(data.nodes)
+                .enter()
+                .append('circle')
+                .attr('class', 'node')
+                .attr('r', 8)
+                .on('click', showNodeDetails);
+
+            // Create node labels
+            const nodeLabel = svg.append('g')
+                .selectAll('.node-label')
+                .data(data.nodes)
+                .enter()
+                .append('text')
+                .attr('class', 'node-label')
+                .attr('dy', -12)
+                .text(d => d.properties.name || d.id);
+
+            // Update simulation on tick
+            simulation.on('tick', () => {
+                link
+                    .attr('x1', d => d.source.x)
+                    .attr('y1', d => d.source.y)
+                    .attr('x2', d => d.target.x)
+                    .attr('y2', d => d.target.y);
+
+                linkLabel
+                    .attr('x', d => (d.source.x + d.target.x) / 2)
+                    .attr('y', d => (d.source.y + d.target.y) / 2);
+
+                node
+                    .attr('cx', d => d.x)
+                    .attr('cy', d => d.y);
+
+                nodeLabel
+                    .attr('x', d => d.x)
+                    .attr('y', d => d.y);
+            });
+
+            // Update statistics
+            updateStatistics(data);
+        }
+
+        function updateStatistics(data) {
+            // Update node count
+            document.getElementById('total-nodes').textContent = data.nodes.length;
+            document.getElementById('total-relationships').textContent = data.relationships.length;
+
+            // Group nodes by type
+            const nodeTypes = {};
+            data.nodes.forEach(node => {
+                node.labels.forEach(label => {
+                    nodeTypes[label] = (nodeTypes[label] || 0) + 1;
+                });
+            });
+
+            // Group relationships by type
+            const relTypes = {};
+            data.relationships.forEach(rel => {
+                relTypes[rel.type] = (relTypes[rel.type] || 0) + 1;
+            });
+
+            // Update node types display
+            const nodeTypesHtml = Object.entries(nodeTypes)
+                .map(([type, count]) => `
+                    <div class="type-tag" style="background-color: #e3f2fd">
+                        ${type} <span class="count">${count}</span>
+                    </div>
+                `).join('');
+            document.getElementById('node-types').innerHTML = nodeTypesHtml;
+
+            // Update relationship types display
+            const relTypesHtml = Object.entries(relTypes)
+                .map(([type, count]) => `
+                    <div class="type-tag" style="background-color: #fff3e0">
+                        ${type} <span class="count">${count}</span>
+                    </div>
+                `).join('');
+            document.getElementById('relationship-types').innerHTML = relTypesHtml;
+        }
+
+        function showNodeDetails(node) {
+            const detailsTable = document.getElementById('node-details-table');
+            const properties = node.properties;
+            
+            let html = `
+                <tr>
+                    <td>Labels</td>
+                    <td>${node.labels.join(', ')}</td>
+                </tr>
+            `;
+            
+            for (const [key, value] of Object.entries(properties)) {
+                html += `
+                    <tr>
+                        <td>${key}</td>
+                        <td>${value}</td>
+                    </tr>
+                `;
+            }
+            
+            detailsTable.innerHTML = html;
+        }
+
+        // Add event listener to generate button
+        document.getElementById('generate-graph-btn').addEventListener('click', function() {
+            // Hide generate section and show loading
+            document.getElementById('generate-section').style.display = 'none';
+            document.getElementById('loading-message').style.display = 'block';
+            
+            // Fetch and initialize graph
+            fetch('/get_graph_data')
+                .then(response => response.json())
+                .then(data => {
+                    // Hide loading message
+                    document.getElementById('loading-message').style.display = 'none';
+                    
+                    if (data.success) {
+                        // Show graph container
+                        document.getElementById('graph-container').style.display = 'block';
+                        initializeGraph(data);
+                    } else {
+                        console.error('Error loading graph data:', data.error);
+                        alert('Error loading graph data: ' + data.error);
+                        // Show generate section again
+                        document.getElementById('generate-section').style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('loading-message').style.display = 'none';
+                    alert('Error: ' + error.message);
+                    // Show generate section again
+                    document.getElementById('generate-section').style.display = 'block';
+                });
+        });
+    </script>
+</body>
+</html>

@@ -1,28 +1,74 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Upload PDF</title>
+    <title>Chronos</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
-        .upload-form {
-            border: 2px dashed #ccc;
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+        .box {
+            border: 2px solid #ccc;
             padding: 20px;
             text-align: center;
+            border-radius: 8px;
+        }
+        .pdf-viewer {
+            min-height: 600px;
+            border: 2px solid #ccc;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .generate-section {
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        .button:hover {
+            background-color: #45a049;
         }
         .messages {
             margin: 20px 0;
             padding: 10px;
             background-color: #f0f0f0;
+            border-radius: 4px;
         }
     </style>
 </head>
 <body>
-    <h1>Upload PDF File</h1>
+    <div class="header">
+        <h1>Chronos</h1>
+    </div>
+
     {% with messages = get_flashed_messages() %}
         {% if messages %}
             <div class="messages">
@@ -32,11 +78,53 @@
             </div>
         {% endif %}
     {% endwith %}
-    <div class="upload-form">
-        <form method="post" enctype="multipart/form-data">
-            <input type="file" name="file" accept=".pdf">
-            <input type="submit" value="Upload">
-        </form>
+
+    <!-- Upload Section -->
+    <div class="container">
+        <div class="box">
+            <h2>Text Extractor OCR</h2>
+            <form method="post" enctype="multipart/form-data">
+                <input type="file" name="file" accept=".pdf">
+                <input type="submit" value="Upload" class="button">
+            </form>
+            {% if pdf_file %}
+            <div style="margin-top: 15px;">
+                <a href="{{ url_for('clear_session') }}" class="button" style="background-color: #f44336;">New Upload</a>
+            </div>
+            {% endif %}
+        </div>
     </div>
+
+    <!-- Main Content: PDF Viewer and Pinata Link -->
+    {% if pdf_file %}
+    <div class="main-content">
+        <div class="pdf-viewer">
+            <h2>PDF Viewer</h2>
+            <iframe src="{{ url_for('serve_pdf', filename=pdf_file) }}" width="100%" height="600px" style="border: 1px solid #ddd;"></iframe>
+        </div>
+
+        <div class="box">
+            <h2>Pinata Link</h2>
+            {% if pinata_link %}
+                <a href="{{ pinata_link }}" target="_blank" class="button">View on IPFS</a>
+                <p style="margin-top: 15px; font-size: 14px; color: #666;">Document successfully uploaded to IPFS</p>
+            {% else %}
+                <p>Processing document...</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Generate Knowledge Graph Section -->
+    <div class="generate-section">
+        <h2>Knowledge Graph Generator</h2>
+        <p>File processed successfully! Generate a knowledge graph from the extracted content.</p>
+        <a href="{{ url_for('knowledge_graph') }}" class="button">Generate KG</a>
+    </div>
+    {% else %}
+    <div style="text-align: center; padding: 50px; color: #666;">
+        <h3>Upload a PDF document to get started</h3>
+        <p>Once uploaded, you'll see the PDF viewer and processing options below.</p>
+    </div>
+    {% endif %}
 </body>
 </html>

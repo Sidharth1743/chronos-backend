@@ -1,12 +1,15 @@
-from flask import Flask, request, render_template, redirect, url_for, flash, send_from_directory, jsonify
+from flask import Flask, request, render_template, redirect, url_for, flash, send_from_directory, jsonify, session
 import os
+import tempfile
+import json
+import gzip
+import base64
 from dotenv import load_dotenv
 from services.ocr import OCRProcessor
 from services.semantic import SemanticProcessor
 from services.pinata import PinataUploader
 from services.ner import LangChainKnowledgeGraphAgent, export_to_json, validate_graph_element
 from services.neo4j_ops import KnowledgeGraphPipeline
-import json
 
 # Load environment variables
 load_dotenv()
@@ -25,26 +28,114 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs('results', exist_ok=True)
 
 # Initialize services
-openai_api_key = os.getenv("OPENAI_API_KEY")
-neo4j_uri = os.getenv("NEO4J_URI")
-neo4j_username = os.getenv("NEO4J_USERNAME")
-neo4j_password = os.getenv("NEO4J_PASSWORD")
 pinata_api_key = os.getenv("PINATA_API_KEY")
 pinata_secret_api_key = os.getenv("PINATA_SECRET_API_KEY")
+google_api_key = os.getenv("GOOGLE_API_KEY")
 
 ocr_processor = OCRProcessor()
 semantic_processor = SemanticProcessor()
 pinata_uploader = PinataUploader(api_key=pinata_api_key, secret_api_key=pinata_secret_api_key)
 ner_agent = LangChainKnowledgeGraphAgent()
-knowledge_graph_pipeline = KnowledgeGraphPipeline(
-    openai_api_key=openai_api_key,
-    neo4j_uri=neo4j_uri,
-    neo4j_username=neo4j_username,
-    neo4j_password=neo4j_password
-)
+
+# Neo4j is now optional since we use session-based storage
+knowledge_graph_pipeline = None
+try:
+    neo4j_uri = os.getenv("NEO4J_URI")
+    neo4j_username = os.getenv("NEO4J_USERNAME")
+    neo4j_password = os.getenv("NEO4J_PASSWORD")
+    
+    if neo4j_uri and neo4j_username and neo4j_password:
+        knowledge_graph_pipeline = KnowledgeGraphPipeline(
+            google_api_key=google_api_key,
+            neo4j_uri=neo4j_uri,
+            neo4j_username=neo4j_username,
+            neo4j_password=neo4j_password
+        )
+        print("Neo4j connection initialized (optional)")
+    else:
+        print("Neo4j credentials not found - using session-based storage only")
+except Exception as e:
+    print(f"Neo4j initialization failed - using session-based storage only: {e}")
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def compress_data(data):
+    """Compress data for session storage to avoid cookie size limits."""
+    try:
+        json_str = json.dumps(data)
+        compressed = gzip.compress(json_str.encode('utf-8'))
+        return base64.b64encode(compressed).decode('utf-8')
+    except Exception as e:
+        print(f"Error compressing data: {e}")
+        return None
+
+def decompress_data(compressed_data):
+    """Decompress data from session storage."""
+    try:
+        if not compressed_data:
+            return None
+        compressed = base64.b64decode(compressed_data.encode('utf-8'))
+        json_str = gzip.decompress(compressed).decode('utf-8')
+        return json.loads(json_str)
+    except Exception as e:
+        print(f"Error decompressing data: {e}")
+        return None
+
+def store_graph_data(nodes, relationships):
+    """Store graph data in session with compression and size optimization."""
+    # Optimize data by removing unnecessary fields
+    optimized_nodes = []
+    for node in nodes:
+        optimized_nodes.append({
+            'id': node['id'],
+            'labels': node['labels'][:1],  # Keep only first label to save space
+            'properties': {k: str(v)[:50] for k, v in node.get('properties', {}).items() if k in ['name', 'type']}  # Keep only essential properties
+        })
+    
+    optimized_relationships = []
+    for rel in relationships:
+        optimized_relationships.append({
+            'source': rel['source'],
+            'target': rel['target'],
+            'type': rel['type']
+            # Skip properties to save space
+        })
+    
+    graph_data = {
+        'nodes': optimized_nodes,
+        'relationships': optimized_relationships,
+        'stats': {
+            'nodes': len(optimized_nodes),
+            'relationships': len(optimized_relationships)
+        }
+    }
+    
+    # Try to compress and store
+    compressed = compress_data(graph_data)
+    if compressed and len(compressed) < 3000:  # Leave room for other session data
+        session['graph_data_compressed'] = compressed
+        session['has_graph_data'] = True
+        return True
+    else:
+        # If still too large, store only essential info
+        session['graph_stats'] = graph_data['stats']
+        session['has_graph_data'] = False
+        print("Graph data too large for session storage, storing only statistics")
+        return False
+
+def get_graph_data():
+    """Retrieve graph data from session."""
+    if session.get('has_graph_data'):
+        compressed = session.get('graph_data_compressed')
+        return decompress_data(compressed)
+    else:
+        # Return minimal data if full graph not available
+        return {
+            'nodes': [],
+            'relationships': [],
+            'stats': session.get('graph_stats', {'nodes': 0, 'relationships': 0})
+        }
 
 def process_pdf(filepath):
     try:
@@ -53,15 +144,17 @@ def process_pdf(filepath):
 
         # Step 2: Semantic
         semantic_output = semantic_processor.process(ocr_text)
-        semantic_file = "results/semantic_output.txt"
-        with open(semantic_file, "w", encoding="utf-8") as f:
-            f.write(semantic_output)
+        
+        # Create temporary file for Pinata upload
+        with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False) as temp_file:
+            temp_file.write(semantic_output)
+            semantic_file = temp_file.name
 
         # Step 3: Pinata
         pinata_link = pinata_uploader.upload_document(semantic_file)
-        pinata_link_file = "results/pinata_link.txt"
-        with open(pinata_link_file, "w", encoding="utf-8") as f:
-            f.write(pinata_link)
+        
+        # Clean up temporary file
+        os.unlink(semantic_file)
 
         # Step 4: NER
         graph_elements = ner_agent.extract_from_text(semantic_output)
@@ -74,29 +167,76 @@ def process_pdf(filepath):
             merged = graph_elements[0]
 
         if validate_graph_element(merged):
-            json_data = export_to_json(merged)
-            ner_json_file = "results/ner_output.json"
-            with open(ner_json_file, "w", encoding="utf-8") as f:
-                json.dump(json_data, f, indent=2)
+            # Convert graph elements to session-friendly format
+            nodes = []
+            relationships = []
+            
+            for node in merged.nodes:
+                nodes.append({
+                    'id': node.id,
+                    'labels': [node.type],
+                    'properties': node.properties
+                })
+            
+            for rel in merged.relationships:
+                relationships.append({
+                    'source': rel.subj.id,
+                    'target': rel.obj.id,
+                    'type': rel.type,
+                    'properties': rel.properties
+                })
+            
+            # Store graph data using compressed storage
+            store_graph_data(nodes, relationships)
         else:
             raise Exception("Invalid graph element structure.")
 
-        # Step 5: Neo4j
-        success = knowledge_graph_pipeline.store_in_neo4j([merged])
-        if not success:
-            raise Exception("Failed to store in Neo4j")
-
-        stats = knowledge_graph_pipeline.get_statistics()
+        # Store results in session (keep these small)
+        session['pinata_link'] = pinata_link
+        session['processing_complete'] = True
+        # Don't store semantic_output as it's large
         
+        graph_data = get_graph_data()
         return {
             'pinata_link': pinata_link,
-            'nodes': stats['nodes'],
-            'relationships': stats['relationships'],
+            'nodes': graph_data['stats']['nodes'],
+            'relationships': graph_data['stats']['relationships'],
             'success': True
         }
     except Exception as e:
         print(f"Error in process_pdf: {str(e)}")
+        session['processing_error'] = str(e)
         return {'error': str(e), 'success': False}
+
+@app.route('/knowledge_graph')
+def knowledge_graph():
+    return render_template('knowledge_graph.html')
+
+@app.route('/get_graph_data')
+def get_graph_data_route():
+    try:
+        # Get graph data from session using our helper function
+        graph_data = get_graph_data()
+        
+        # Check if we have graph data
+        if not graph_data or (not graph_data.get('nodes') and not graph_data.get('relationships')):
+            return jsonify({
+                'success': False,
+                'error': 'No graph data available. Please upload and process a document first.'
+            })
+        
+        return jsonify({
+            'success': True,
+            'stats': graph_data['stats'],
+            'nodes': graph_data['nodes'],
+            'relationships': graph_data['relationships']
+        })
+    except Exception as e:
+        print(f"Error in get_graph_data: {str(e)}")
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        })
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
@@ -115,108 +255,88 @@ def upload_file():
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(filepath)
             
+            # Clear previous session data before processing new file
+            session.clear()
+            
             result = process_pdf(filepath)
             
             if result['success']:
                 flash('File processed successfully')
-                return redirect(url_for('view_pdf', filename=filename))
+                session['pdf_file'] = filename
+                return render_template('upload.html',
+                                    pdf_file=filename,
+                                    pinata_link=session.get('pinata_link'))
             else:
                 flash(f'Error processing file: {result.get("error", "Unknown error")}')
                 return redirect(request.url)
         else:
             flash('Please upload only PDF files')
     
-    return render_template('upload.html')
+    # For GET requests, always start with a clean state
+    # Only show data if there's a current session with processed file
+    current_pdf = session.get('pdf_file') if session.get('processing_complete') else None
+    current_pinata = session.get('pinata_link') if session.get('processing_complete') else None
+    
+    return render_template('upload.html',
+                         pdf_file=current_pdf,
+                         pinata_link=current_pinata)
+
+@app.route('/clear_session')
+def clear_session():
+    """Clear all session data and redirect to home"""
+    session.clear()
+    flash('Session cleared. You can now upload a new document.')
+    return redirect(url_for('upload_file'))
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename, mimetype='application/pdf')
 
+@app.route('/pdf/<filename>')
+def serve_pdf(filename):
+    """Serve PDF file directly for iframe viewing"""
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename, mimetype='application/pdf')
+
 @app.route('/view/<filename>')
 def view_pdf(filename):
     try:
-        # Get pinata link
-        with open('results/pinata_link.txt', 'r') as f:
-            pinata_link = f.read().strip()
-
-        # Get graph data directly from Neo4j
-        neo4j_graph = knowledge_graph_pipeline.graph
+        # Get data from session
+        pinata_link = session.get('pinata_link', '')
+        graph_data = get_graph_data()
         
-        # Fetch all nodes with their labels and properties
-        nodes_query = """
-        MATCH (n)
-        WITH n, labels(n) as nodeLabels, properties(n) as props
-        RETURN collect({
-            id: n.id,
-            labels: nodeLabels,
-            properties: props
-        }) as nodes
-        """
-        
-        # Fetch all relationships
-        rels_query = """
-        MATCH (source)-[r]->(target)
-        WITH source, r, target, 
-             labels(source) as sourceLabels,
-             labels(target) as targetLabels,
-             properties(r) as relProps
-        RETURN collect({
-            source: source.id,
-            target: target.id,
-            type: type(r),
-            properties: relProps
-        }) as relationships
-        """
-        
-        # Execute queries
-        nodes_result = neo4j_graph.query(nodes_query)
-        rels_result = neo4j_graph.query(rels_query)
-        
-        # Transform nodes
-        nodes = []
-        node_ids = set()
-        
-        for node in nodes_result[0]['nodes']:
-            node_ids.add(node['id'])
-            nodes.append({
+        # Transform nodes for visualization
+        transformed_nodes = []
+        for node in graph_data.get('nodes', []):
+            transformed_nodes.append({
                 'id': node['id'],
                 'labels': node['labels'],
                 'properties': node.get('properties', {}),
                 'title': node.get('properties', {}).get('name', node['id']).replace('_', ' ').title()
             })
         
-        # Transform relationships
+        # Transform relationships for visualization
         links = []
-        for rel in rels_result[0]['relationships']:
-            source_id = rel['source']
-            target_id = rel['target']
-            
-            if source_id not in node_ids or target_id not in node_ids:
-                continue
-                
+        for rel in graph_data.get('relationships', []):
             links.append({
-                'source': source_id,
-                'target': target_id,
+                'source': rel['source'],
+                'target': rel['target'],
                 'type': rel['type'],
                 'properties': rel.get('properties', {})
             })
         
-        # Get graph statistics
-        stats = knowledge_graph_pipeline.get_statistics()
-        
         # Prepare the complete graph data
-        graph_data = {
-            'nodes': nodes,
+        complete_graph_data = {
+            'nodes': transformed_nodes,
             'links': links,
             'stats': {
-                'totalNodes': stats['nodes'],
-                'totalRelationships': stats['relationships']
+                'totalNodes': graph_data['stats']['nodes'],
+                'totalRelationships': graph_data['stats']['relationships']
             }
         }
         
         return render_template('view_pdf.html',
                              filename=filename,
-                             graph_data=json.dumps(graph_data),
+                             graph_data=json.dumps(complete_graph_data),
                              pinata_link=pinata_link)
     except Exception as e:
         print(f"Error in view_pdf: {str(e)}")

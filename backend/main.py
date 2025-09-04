@@ -17,6 +17,7 @@ def main():
     neo4j_password = os.getenv("NEO4J_PASSWORD")
     pinata_api_key = os.getenv("PINATA_API_KEY")
     pinata_secret_api_key = os.getenv("PINATA_SECRET_API_KEY")
+    google_api_key = os.getenv("GOOGLE_API_KEY")
 
     # Step 1: OCR
     ocr_input_file = os.getenv("OCR_INPUT_FILE", "../doc.pdf")
@@ -60,7 +61,7 @@ def main():
 
     # Step 5: Neo4j
     pipeline = KnowledgeGraphPipeline(
-        openai_api_key=openai_api_key,
+        google_api_key=google_api_key,
         neo4j_uri=neo4j_uri,
         neo4j_username=neo4j_username,
         neo4j_password=neo4j_password

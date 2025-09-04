@@ -1,10 +1,11 @@
 from typing import List, Dict
-from langchain_openai import ChatOpenAI
+# from langchain_openai import ChatOpenAI
 from langchain_neo4j import Neo4jGraph
 from langchain_neo4j import GraphCypherQAChain
 from .ner import Node, Relationship, GraphElement  # Import from ner.py
 from dotenv import load_dotenv
 import requests
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 load_dotenv() 
 
@@ -13,10 +14,11 @@ class KnowledgeGraphPipeline:
     
     def __init__(
         self,
-        openai_api_key: str,
+        google_api_key: str,
         neo4j_uri: str,
         neo4j_username: str,
-        neo4j_password: str
+        neo4j_password: str,
+        
     ):
         """
         Initialize the Neo4j pipeline.
@@ -28,10 +30,11 @@ class KnowledgeGraphPipeline:
             neo4j_password: Neo4j password
         """
         # Initialize LLM
-        self.llm = ChatOpenAI(
-            api_key=openai_api_key,
-            model="gpt-4",
-            temperature=0.1
+        self.llm = ChatGoogleGenerativeAI(
+            api_key=google_api_key,
+            model="gemini-2.5-flash",
+            temperature=0.1,
+            max_tokens=5000
         )
         
         # Initialize Neo4j connection
@@ -40,6 +43,54 @@ class KnowledgeGraphPipeline:
             username=neo4j_username,
             password=neo4j_password
         )
+
+    def get_all_nodes(self) -> List[Dict]:
+        """
+        Retrieve all nodes from the Neo4j database.
+        
+        Returns:
+            List of dictionaries containing node information
+        """
+        query = """
+        MATCH (n)
+        RETURN n
+        """
+        result = self.graph.query(query)
+        nodes = []
+        for record in result:
+            node = record['n']
+            nodes.append({
+                'id': node.id,
+                'labels': list(node.labels),
+                'properties': dict(node)
+            })
+        return nodes
+
+    def get_all_relationships(self) -> List[Dict]:
+        """
+        Retrieve all relationships from the Neo4j database.
+        
+        Returns:
+            List of dictionaries containing relationship information
+        """
+        query = """
+        MATCH (source)-[r]->(target)
+        RETURN source, r, target
+        """
+        result = self.graph.query(query)
+        relationships = []
+        for record in result:
+            source = record['source']
+            rel = record['r']
+            target = record['target']
+            relationships.append({
+                'id': rel.id,
+                'type': rel.type,
+                'properties': dict(rel),
+                'source': source.id,
+                'target': target.id
+            })
+        return relationships
 
     def store_in_neo4j(self, graph_elements: List[GraphElement]) -> bool:
         """

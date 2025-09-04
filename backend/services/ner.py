@@ -3,12 +3,13 @@ from dataclasses import dataclass
 import re
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import BaseOutputParser
-from langchain_openai import ChatOpenAI
+# from langchain_openai import ChatOpenAI
 from langchain.schema import Document
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from dotenv import load_dotenv
 import requests
 from .umls import UMLSService
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 load_dotenv() 
 
@@ -104,7 +105,7 @@ class LangChainKnowledgeGraphAgent:
     
     def __init__(
         self,
-        llm: Optional[ChatOpenAI] = None,
+        llm: Optional[ChatGoogleGenerativeAI] = None,
         custom_prompt: Optional[str] = None
     ):
         """
@@ -115,10 +116,10 @@ class LangChainKnowledgeGraphAgent:
             custom_prompt: Custom extraction prompt (optional)
         """
         try:
-            self.llm = llm or ChatOpenAI(
-                model="gpt-4o",
+            self.llm = llm or ChatGoogleGenerativeAI(
+                model="gemini-2.0-flash",
                 temperature=0.1,
-                max_tokens=4000
+                max_tokens=5000
             )
             
             # Default extraction prompt
