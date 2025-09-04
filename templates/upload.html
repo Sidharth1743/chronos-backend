@@ -1,92 +1,372 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Chronos</title>
+    <title>ChronosGraph - Medical Knowledge Graph Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-green: #10b981;
+            --light-green: #d1fae5;
+            --dark-green: #047857;
+            --accent-green: #34d399;
+            --bg-primary: #f0fdf4;
+            --bg-secondary: #ffffff;
+            --text-primary: #064e3b;
+            --text-secondary: #065f46;
+            --border-color: #a7f3d0;
+            --shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.1);
+            --tech-font: 'JetBrains Mono', monospace;
+            --ui-font: 'Inter', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            max-width: 1200px;
+            font-family: var(--ui-font);
+            background: linear-gradient(135deg, var(--bg-primary) 0%, #ffffff 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 95%;
             margin: 0 auto;
             padding: 20px;
         }
+
         .header {
             text-align: center;
             margin-bottom: 40px;
+            padding: 30px 0;
+            background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+            border-radius: 16px;
+            color: white;
+            box-shadow: var(--shadow);
         }
-        .container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
+
+        .header h1 {
+            font-family: var(--tech-font);
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            letter-spacing: -0.02em;
+        }
+
+        .header .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .upload-section {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .upload-section h2 {
+            font-family: var(--tech-font);
+            color: var(--text-primary);
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+
+        .upload-section p {
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
             margin-bottom: 20px;
         }
+
+        .file-input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-input-label {
+            display: inline-block;
+            padding: 12px 24px;
+            background: var(--light-green);
+            border: 2px dashed var(--primary-green);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: var(--tech-font);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-input-label:hover {
+            background: var(--accent-green);
+            color: white;
+            border-color: var(--dark-green);
+        }
+
+        .btn {
+            font-family: var(--tech-font);
+            font-weight: 500;
+            padding: 12px 28px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: var(--primary-green);
+            color: white;
+            box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--dark-green);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: 2px solid #dc2626;
+            box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+            padding: 12px 28px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 12px;
+            font-family: var(--tech-font);
+            font-size: 0.95rem;
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            border-color: #b91c1c;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            margin-left: 10px;
+            border: 2px solid #dc2626;
+            box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(239, 68, 68, 0.4);
+            border-color: #b91c1c;
+        }
+
         .main-content {
             display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
+            grid-template-columns: 3fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+            max-width: 1800px;
+            margin-left: auto;
+            margin-right: auto;
         }
-        .box {
-            border: 2px solid #ccc;
-            padding: 20px;
-            text-align: center;
-            border-radius: 8px;
-        }
+
         .pdf-viewer {
-            min-height: 600px;
-            border: 2px solid #ccc;
-            padding: 20px;
-            border-radius: 8px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            width: 100%;
+            flex-grow: 1;
         }
-        .generate-section {
-            text-align: center;
-            margin-top: 20px;
-            padding: 20px;
-            background-color: #f8f9fa;
-            border-radius: 8px;
+
+        .pdf-viewer h2 {
+            font-family: var(--tech-font);
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
         }
-        .button {
-            background-color: #4CAF50;
+
+        .pdf-viewer iframe {
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+        }
+
+        .decentralized-storage {
+            background: linear-gradient(135deg, var(--light-green), #ffffff);
+            border: 2px solid var(--primary-green);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            width: 350px;
+            position: sticky;
+            top: 20px;
+            align-self: start;
+        }
+
+        .decentralized-storage::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .decentralized-storage h2 {
+            font-family: var(--tech-font);
+            color: var(--text-primary);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .decentralized-storage .tech-badge {
+            display: inline-block;
+            background: var(--primary-green);
             color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            margin: 10px 0;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-family: var(--tech-font);
+            font-weight: 500;
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
         }
-        .button:hover {
-            background-color: #45a049;
+
+        .decentralized-storage p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
         }
+
+        .generate-section {
+            background: linear-gradient(135deg, var(--bg-secondary), var(--light-green));
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .generate-section h2 {
+            font-family: var(--tech-font);
+            color: var(--text-primary);
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+
+        .generate-section p {
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
+
         .messages {
-            margin: 20px 0;
-            padding: 10px;
-            background-color: #f0f0f0;
-            border-radius: 4px;
+            background: var(--light-green);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-family: var(--tech-font);
+            font-size: 0.9rem;
+        }
+
+        .welcome-message {
+            text-align: center;
+            padding: 60px 20px;
+            background: var(--bg-secondary);
+            border: 2px dashed var(--border-color);
+            border-radius: 16px;
+            color: var(--text-secondary);
+        }
+
+        .welcome-message h3 {
+            font-family: var(--tech-font);
+            color: var(--text-primary);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .welcome-message p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 1600px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .pdf-viewer {
+                min-width: auto;
+            }
+
+            .decentralized-storage {
+                max-width: none;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Chronos</h1>
-    </div>
-
-    {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <div class="messages">
-                {% for message in messages %}
-                    <p>{{ message }}</p>
-                {% endfor %}
-            </div>
-        {% endif %}
-    {% endwith %}
-
-    <!-- Upload Section -->
     <div class="container">
-        <div class="box">
-            <h2>Text Extractor OCR</h2>
+        <div class="header">
+            <h1>ChronosGraph</h1>
+            <p class="subtitle">Medical Document Analysis & Knowledge Graph Generation</p>
+        </div>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="upload-section">
+            <h2>📄 Document Analysis Pipeline</h2>
+            <p>Upload a medical document to extract knowledge and generate insights</p>
             <form method="post" enctype="multipart/form-data">
-                <input type="file" name="file" accept=".pdf">
-                <input type="submit" value="Upload" class="button">
-            </form>
+                <div class="file-input-wrapper">
+                    <input type="file" name="file" accept=".pdf" class="file-input" id="file-input">
+                    <label for="file-input" class="file-input-label">Choose PDF File</label>
+                </div>
+                <button type="submit" class="btn btn-primary">Process Document</button>
             {% if pdf_file %}
             <div style="margin-top: 15px;">
                 <a href="{{ url_for('clear_session') }}" class="button" style="background-color: #f44336;">New Upload</a>
@@ -99,31 +379,38 @@
     {% if pdf_file %}
     <div class="main-content">
         <div class="pdf-viewer">
-            <h2>PDF Viewer</h2>
-            <iframe src="{{ url_for('serve_pdf', filename=pdf_file) }}" width="100%" height="600px" style="border: 1px solid #ddd;"></iframe>
+            <h2>📑 Document Preview</h2>
+                                <iframe src="{{ url_for('serve_pdf', filename=pdf_file) }}" style="width: 100%; min-width: 1000px; height: 85vh; border: 2px solid var(--border-color); border-radius: 12px; box-shadow: var(--shadow);"></iframe>
         </div>
 
-        <div class="box">
-            <h2>Pinata Link</h2>
+        <div class="decentralized-storage">
+            <span class="tech-badge">IPFS STORAGE</span>
+            <h2>🔗 Decentralized Document Storage</h2>
+            <p>Your document is securely stored on IPFS (InterPlanetary File System), ensuring permanent and decentralized access.</p>
             {% if pinata_link %}
-                <a href="{{ pinata_link }}" target="_blank" class="button">View on IPFS</a>
-                <p style="margin-top: 15px; font-size: 14px; color: #666;">Document successfully uploaded to IPFS</p>
+                <a href="{{ pinata_link }}" target="_blank" class="btn btn-primary">View on IPFS Network</a>
+                <p style="margin-top: 15px; font-size: 0.9rem; color: var(--text-secondary);">
+                    ✓ Document successfully pinned to IPFS
+                </p>
             {% else %}
-                <p>Processing document...</p>
+                <p style="color: var(--text-secondary);">Processing document...</p>
             {% endif %}
         </div>
     </div>
 
     <!-- Generate Knowledge Graph Section -->
     <div class="generate-section">
-        <h2>Knowledge Graph Generator</h2>
-        <p>File processed successfully! Generate a knowledge graph from the extracted content.</p>
-        <a href="{{ url_for('knowledge_graph') }}" class="button">Generate KG</a>
+        <h2>🧬 Knowledge Graph Generator</h2>
+        <p>File processed successfully! Transform your medical document into an interactive knowledge network.</p>
+        <a href="{{ url_for('knowledge_graph') }}" class="btn btn-primary" style="font-size: 1.1rem; padding: 15px 35px;">
+            Generate Knowledge Graph
+        </a>
     </div>
     {% else %}
-    <div style="text-align: center; padding: 50px; color: #666;">
-        <h3>Upload a PDF document to get started</h3>
-        <p>Once uploaded, you'll see the PDF viewer and processing options below.</p>
+    <div class="welcome-message">
+        <h3>👋 Welcome to ChronosGraph</h3>
+        <p>Upload a medical document to begin the knowledge extraction process.<br>
+           We'll analyze your document, store it securely, and generate an interactive knowledge graph.</p>
     </div>
     {% endif %}
 </body>
