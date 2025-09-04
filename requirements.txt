@@ -1,0 +1,13 @@
+flask
+python-dotenv
+openai
+langchain
+neo4j
+requests
+pybase64
+neo4j
+langchain-neo4j
+langchain-google-genai
+agentic-doc
+llama-index
+langchain-core

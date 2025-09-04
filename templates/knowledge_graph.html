@@ -1,116 +1,331 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Knowledge Graph</title>
+    <title>ChronosGraph - Knowledge Graph Visualization</title>
     <script src="https://d3js.org/d3.v5.min.js"></script>
+    <link hre        .property-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+            transition: all 0.2s ease;tps://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-green: #10b981;
+            --light-green: #d1fae5;
+            --dark-green: #047857;
+            --accent-green: #34d399;
+            --bg-primary: #f0fdf4;
+            --bg-secondary: #ffffff;
+            --text-primary: #064e3b;
+            --text-secondary: #065f46;
+            --border-color: #a7f3d0;
+            --shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.1);
+            --tech-font: 'JetBrains Mono', monospace;
+            --ui-font: 'Inter', sans-serif;
+        }
+        
         body {
             margin: 0;
-            padding: 20px;
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
+            padding: 0;
+            font-family: var(--ui-font);
+            background: linear-gradient(135deg, var(--bg-primary) 0%, #ffffff 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
         }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+            background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .header h1 {
+            font-family: var(--tech-font);
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            letter-spacing: -0.02em;
+        }
+
+        .header .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
         .main-container {
             display: flex;
-            gap: 20px;
+            gap: 30px;
             max-width: 1800px;
-            margin: 0 auto;
+            margin: 30px auto;
+            padding: 0 30px;
         }
+
         .graph-panel {
             flex: 2;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: var(--bg-secondary);
+            padding: 25px;
+            border-radius: 16px;
+            border: 2px solid var(--border-color);
+            box-shadow: var(--shadow);
         }
+
         .info-panel {
             flex: 1;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: var(--bg-secondary);
+            padding: 25px;
+            border-radius: 16px;
+            border: 2px solid var(--border-color);
+            box-shadow: var(--shadow);
         }
-        .graph-container {
+                .graph-container {
             width: 100%;
-            height: 700px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            height: 900px;
+            border: 2px solid var(--border-color);
+            border-radius: 16px;
             position: relative;
-            background-color: #ffffff;
+            background-color: var(--bg-secondary);
+            box-shadow: var(--shadow);
         }
+        
         .results-overview {
-            background-color: #f8f9fa;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--light-green), var(--bg-secondary));
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
         }
         .overview-section {
             margin-bottom: 20px;
         }
         .overview-section h3 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 16px;
+            font-family: var(--tech-font);
+            color: var(--text-primary);
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            letter-spacing: -0.02em;
         }
+
         .type-tags {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 10px;
         }
+
         .type-tag {
-            padding: 4px 12px;
-            border-radius: 16px;
-            font-size: 13px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-family: var(--tech-font);
             display: flex;
             align-items: center;
-            color: #333;
+            color: var(--text-primary);
+            background: var(--light-green);
+            border: 1px solid var(--primary-green);
+            transition: all 0.3s ease;
+        }
+
+        .type-tag:hover {
+            background: var(--primary-green);
+            color: white;
+            transform: translateY(-1px);
         }
         .node-details-panel {
             margin-top: 20px;
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
+            padding: 0;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            min-height: 300px;
+            box-shadow: var(--shadow);
+        }        .node-details-header {
+            background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+            font-family: var(--tech-font);
+            font-weight: 500;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            color: white;
         }
-        .node-details-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
+
+        .node-label-badge {
+            background: var(--light-green);
+            color: var(--dark-green);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-family: var(--tech-font);
+            margin-left: 12px;
+            border: 1px solid var(--primary-green);
         }
-        .node-details-table td {
-            padding: 8px;
-            border-bottom: 1px solid #ddd;
+        .node-details-content {
+            padding: 25px;
         }
-        .node-details-table td:first-child {
-            font-weight: bold;
-            width: 30%;
+
+        .property-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+            font-family: var(--tech-font);
+            font-size: 0.9rem;
+        }
+
+        .property-row:last-child {
+            border-bottom: none;
+        }
+
+        .btn {
+            font-family: var(--tech-font);
+            font-weight: 500;
+            padding: 12px 28px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: var(--primary-green);
+            color: white;
+            box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--dark-green);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(16, 185, 129, 0.4);
+        }
+
+        .back-nav {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            padding: 12px 24px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: var(--tech-font);
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .back-nav:hover {
+            transform: translateX(-5px);
+            background: var(--light-green);
+            border-color: var(--primary-green);
+        }
+        
+        .back-nav span {
+            font-size: 1.2rem;
+        }
+    
+        .property-key {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            font-family: var(--tech-font);
+        }
+        .property-value {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            word-break: break-all;
+            max-width: 200px;
+            font-family: var(--tech-font);
+        }
+        .copy-icon {
+            cursor: pointer;
+            color: var(--primary-green);
+            margin-left: 8px;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        .copy-icon:hover {
+            color: var(--dark-green);
+            transform: translateY(-1px);
         }
         .node {
-            fill: #66b2ff;
-            stroke: #004d99;
-            stroke-width: 1.5px;
             cursor: pointer;
+            transition: all 0.3s ease;
         }
         .node:hover {
-            fill: #004d99;
+            stroke-width: 3px;
+            filter: brightness(1.2);
+        }
+        .node.selected {
+            stroke: #ff6b6b;
+            stroke-width: 4px;
+            filter: brightness(1.3);
         }
         .link {
-            stroke: #999;
+            stroke: #718096;
             stroke-opacity: 0.6;
-            stroke-width: 1px;
+            stroke-width: 2px;
+            transition: all 0.3s ease;
+        }
+        .link:hover {
+            stroke: #4a5568;
+            stroke-opacity: 0.8;
+            stroke-width: 3px;
         }
         .node-label {
-            font-size: 12px;
-            font-family: Arial;
+            font-size: 11px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             pointer-events: none;
-            fill: #333;
+            fill: #2d3748;
             text-anchor: middle;
+            font-weight: bold;
         }
         .link-label {
             font-size: 10px;
-            font-family: Arial;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             pointer-events: none;
-            fill: #666;
+            fill: #4a5568;
             text-anchor: middle;
+            font-weight: 500;
+        }
+        .zoom-controls {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .zoom-btn {
+            width: 30px;
+            height: 30px;
+            background: #4a5568;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .zoom-btn:hover {
+            background: #2d3748;
         }
         .back-button {
             margin-bottom: 20px;
@@ -136,24 +351,34 @@
     </style>
 </head>
 <body>
-    <div class="back-button">
-        <a href="{{ url_for('upload_file') }}">← Back to Upload</a>
+    <a href="{{ url_for('upload_file') }}" class="back-nav">
+        <span>←</span> Back to Document
+    </a>
+
+    <div class="header">
+        <h1>Medical Knowledge Graph</h1>
+        <p class="subtitle">Interactive Visualization of Medical Document Relations</p>
     </div>
 
     <div class="main-container">
         <div class="graph-panel">
-            <h2>Knowledge Graph Visualization</h2>
-            <div id="generate-section" style="text-align: center; padding: 50px;">
-                <h3>Generate Knowledge Graph</h3>
-                <p>Click the button below to generate and visualize the knowledge graph from your processed document.</p>
-                <button id="generate-graph-btn" class="button" style="background-color: #007bff; color: white; padding: 15px 30px; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">
-                    Generate Knowledge Graph
+            <div id="generate-section" style="text-align: center; padding: 40px;">
+                <h2 style="font-family: var(--tech-font); color: var(--text-primary); margin-bottom: 15px;">🧬 Generate Knowledge Graph</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 25px;">Transform your medical document into an interactive knowledge network visualization.</p>
+                <button id="generate-graph-btn" class="btn btn-primary" style="font-size: 1.1rem; padding: 15px 35px; transform: translateY(0); transition: all 0.3s ease;">
+                    🧬 Generate Knowledge Graph
                 </button>
                 <div id="loading-message" style="display: none; margin-top: 20px;">
                     <p>Generating knowledge graph... Please wait.</p>
                 </div>
             </div>
-            <div id="graph-container" class="graph-container" style="display: none;"></div>
+            <div id="graph-container" class="graph-container" style="display: none;">
+                <div class="zoom-controls">
+                    <button class="zoom-btn" id="zoom-in">+</button>
+                    <button class="zoom-btn" id="zoom-out">-</button>
+                    <button class="zoom-btn" id="reset-zoom">⌂</button>
+                </div>
+            </div>
         </div>
         
         <div class="info-panel">
@@ -170,70 +395,125 @@
             </div>
             
             <div id="node-details" class="node-details-panel">
-                <h3>Specific Node Information</h3>
-                <table id="node-details-table" class="node-details-table">
-                    <tr><td colspan="2">Click on a node to view its details</td></tr>
-                </table>
+                <div class="node-details-header">
+                    <span>Node details</span>
+                    <span id="node-label-badge" class="node-label-badge" style="display: none;"></span>
+                </div>
+                <div class="node-details-content">
+                    <div id="node-details-content">
+                        <p style="color: #a0aec0; text-align: center; margin-top: 50px;">Click on a node to view its details</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // D3.js graph implementation
+        let svg, simulation, zoom, selectedNode = null;
+        
+        // Color scheme for different node types
+        const nodeColors = {
+            'MechanisticConcept': '#4299e1',
+            'AnatomicalStructure': '#48bb78',
+            'Disease': '#ed8936',
+            'Treatment': '#9f7aea',
+            'default': '#718096'
+        };
+
+        // Enhanced D3.js graph implementation
         function initializeGraph(data) {
-            const width = document.getElementById('graph-container').offsetWidth;
-            const height = document.getElementById('graph-container').offsetHeight;
+            const container = document.getElementById('graph-container');
+            const width = container.offsetWidth;
+            const height = container.offsetHeight;
             
-            // Create SVG container
-            const svg = d3.select('#graph-container')
+            // Clear any existing SVG
+            d3.select('#graph-container svg').remove();
+            
+            // Create SVG container with zoom
+            svg = d3.select('#graph-container')
                 .append('svg')
                 .attr('width', width)
                 .attr('height', height);
 
-            // Create force simulation
-            const simulation = d3.forceSimulation(data.nodes)
+            // Create zoom behavior
+            zoom = d3.zoom()
+                .scaleExtent([0.1, 4])
+                .on('zoom', () => {
+                    g.attr('transform', d3.event.transform);
+                });
+
+            svg.call(zoom);
+
+            // Create main group for zooming/panning
+            const g = svg.append('g');
+
+            // Create force simulation with enhanced forces
+            simulation = d3.forceSimulation(data.nodes)
                 .force('link', d3.forceLink(data.relationships)
                     .id(d => d.id)
-                    .distance(100))
-                .force('charge', d3.forceManyBody().strength(-300))
-                .force('center', d3.forceCenter(width / 2, height / 2));
+                    .distance(120)
+                    .strength(0.5))
+                .force('charge', d3.forceManyBody()
+                    .strength(-400)
+                    .distanceMax(300))
+                .force('center', d3.forceCenter(width / 2, height / 2))
+                .force('collision', d3.forceCollide().radius(25));
 
-            // Create links
-            const link = svg.append('g')
+            // Create links with enhanced styling
+            const link = g.append('g')
                 .selectAll('line')
                 .data(data.relationships)
                 .enter()
                 .append('line')
-                .attr('class', 'link');
+                .attr('class', 'link')
+                .attr('stroke-width', d => Math.sqrt(2));
 
             // Create link labels
-            const linkLabel = svg.append('g')
+            const linkLabel = g.append('g')
                 .selectAll('.link-label')
                 .data(data.relationships)
                 .enter()
                 .append('text')
                 .attr('class', 'link-label')
-                .text(d => d.type);
+                .text(d => d.type)
+                .style('opacity', 0.7);
 
-            // Create nodes
-            const node = svg.append('g')
+            // Create nodes with dynamic colors and enhanced interactions
+            const node = g.append('g')
                 .selectAll('circle')
                 .data(data.nodes)
                 .enter()
                 .append('circle')
                 .attr('class', 'node')
-                .attr('r', 8)
-                .on('click', showNodeDetails);
+                .attr('r', d => Math.max(12, Math.min(20, (d.properties.name || d.id).length * 0.8)))
+                .attr('fill', d => {
+                    const label = d.labels[0] || 'default';
+                    return nodeColors[label] || nodeColors.default;
+                })
+                .attr('stroke', '#fff')
+                .attr('stroke-width', 2)
+                .on('click', handleNodeClick)
+                .on('mouseover', handleNodeHover)
+                .on('mouseout', handleNodeOut)
+                .call(d3.drag()
+                    .on('start', dragstarted)
+                    .on('drag', dragged)
+                    .on('end', dragended));
 
-            // Create node labels
-            const nodeLabel = svg.append('g')
+            // Create node labels with better positioning
+            const nodeLabel = g.append('g')
                 .selectAll('.node-label')
                 .data(data.nodes)
                 .enter()
                 .append('text')
                 .attr('class', 'node-label')
-                .attr('dy', -12)
-                .text(d => d.properties.name || d.id);
+                .attr('dy', -15)
+                .style('font-size', '10px')
+                .style('font-weight', 'bold')
+                .text(d => {
+                    const name = d.properties.name || d.id;
+                    return name.length > 15 ? name.substring(0, 15) + '...' : name;
+                });
 
             // Update simulation on tick
             simulation.on('tick', () => {
@@ -256,8 +536,115 @@
                     .attr('y', d => d.y);
             });
 
+            // Setup zoom controls
+            setupZoomControls();
+            
             // Update statistics
             updateStatistics(data);
+        }
+
+        function handleNodeClick(clickedNode) {
+            // Remove previous selection
+            d3.selectAll('.node').classed('selected', false);
+            
+            // Add selection to clicked node
+            d3.select(this).classed('selected', true);
+            selectedNode = clickedNode;
+            
+            // Show detailed node information
+            showEnhancedNodeDetails(clickedNode);
+        }
+
+        function handleNodeHover(node) {
+            d3.select(this)
+                .transition()
+                .duration(200)
+                .attr('r', d => Math.max(15, Math.min(25, (d.properties.name || d.id).length * 1.0)));
+        }
+
+        function handleNodeOut(node) {
+            if (selectedNode !== node) {
+                d3.select(this)
+                    .transition()
+                    .duration(200)
+                    .attr('r', d => Math.max(12, Math.min(20, (d.properties.name || d.id).length * 0.8)));
+            }
+        }
+
+        function showEnhancedNodeDetails(node) {
+            const badge = document.getElementById('node-label-badge');
+            const content = document.getElementById('node-details-content');
+            
+            // Show and update badge
+            badge.style.display = 'inline-block';
+            badge.textContent = node.labels[0] || 'Node';
+            
+            // Create enhanced property display
+            let html = '';
+            
+            // Add ID row
+            html += `
+                <div class="property-row">
+                    <span class="property-key">&lt;id&gt;</span>
+                    <span class="property-value">${node.id}</span>
+                    <span class="copy-icon" onclick="copyToClipboard('${node.id}')" title="Copy">📋</span>
+                </div>
+            `;
+            
+            // Add properties
+            Object.entries(node.properties).forEach(([key, value]) => {
+                const displayValue = typeof value === 'string' && value.length > 50
+                    ? value.substring(0, 50) + '...'
+                    : value;
+                    
+                html += `
+                    <div class="property-row">
+                        <span class="property-key">${key}</span>
+                        <span class="property-value" title="${value}">${displayValue}</span>
+                        <span class="copy-icon" onclick="copyToClipboard('${value}')" title="Copy">📋</span>
+                    </div>
+                `;
+            });
+            
+            content.innerHTML = html;
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                // Show brief feedback
+                console.log('Copied to clipboard:', text);
+            });
+        }
+
+        function setupZoomControls() {
+            document.getElementById('zoom-in').onclick = () => {
+                svg.transition().call(zoom.scaleBy, 1.5);
+            };
+            
+            document.getElementById('zoom-out').onclick = () => {
+                svg.transition().call(zoom.scaleBy, 1 / 1.5);
+            };
+            
+            document.getElementById('reset-zoom').onclick = () => {
+                svg.transition().call(zoom.transform, d3.zoomIdentity);
+            };
+        }
+
+        function dragstarted(d) {
+            if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+
+        function dragged(d) {
+            d.fx = d3.event.x;
+            d.fy = d3.event.y;
+        }
+
+        function dragended(d) {
+            if (!d3.event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
         }
 
         function updateStatistics(data) {
@@ -279,46 +666,26 @@
                 relTypes[rel.type] = (relTypes[rel.type] || 0) + 1;
             });
 
-            // Update node types display
+            // Update node types display with colors
             const nodeTypesHtml = Object.entries(nodeTypes)
-                .map(([type, count]) => `
-                    <div class="type-tag" style="background-color: #e3f2fd">
-                        ${type} <span class="count">${count}</span>
-                    </div>
-                `).join('');
+                .map(([type, count]) => {
+                    const color = nodeColors[type] || nodeColors.default;
+                    return `
+                        <div class="type-tag" style="background-color: ${color}20; border: 1px solid ${color}; color: ${color}">
+                            ${type} <span class="count">${count}</span>
+                        </div>
+                    `;
+                }).join('');
             document.getElementById('node-types').innerHTML = nodeTypesHtml;
 
             // Update relationship types display
             const relTypesHtml = Object.entries(relTypes)
                 .map(([type, count]) => `
-                    <div class="type-tag" style="background-color: #fff3e0">
+                    <div class="type-tag" style="background-color: #fff3e0; border: 1px solid #ed8936; color: #ed8936">
                         ${type} <span class="count">${count}</span>
                     </div>
                 `).join('');
             document.getElementById('relationship-types').innerHTML = relTypesHtml;
-        }
-
-        function showNodeDetails(node) {
-            const detailsTable = document.getElementById('node-details-table');
-            const properties = node.properties;
-            
-            let html = `
-                <tr>
-                    <td>Labels</td>
-                    <td>${node.labels.join(', ')}</td>
-                </tr>
-            `;
-            
-            for (const [key, value] of Object.entries(properties)) {
-                html += `
-                    <tr>
-                        <td>${key}</td>
-                        <td>${value}</td>
-                    </tr>
-                `;
-            }
-            
-            detailsTable.innerHTML = html;
         }
 
         // Add event listener to generate button
