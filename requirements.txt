@@ -8,7 +8,7 @@ pybase64
 neo4j
 langchain-neo4j
 langchain-google-genai
-agentic-doc
+agentic-doc==0.3.3
 llama-index
 langchain-core
 gunicorn
