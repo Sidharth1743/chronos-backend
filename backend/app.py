@@ -197,13 +197,68 @@ def get_graph_data():
             'stats': session.get('graph_stats', {'nodes': 0, 'relationships': 0})
         }
 
-def process_pdf(filepath):
+from queue import Queue
+from threading import Lock
+
+# Thread-safe queue and status management
+class ProcessingManager:
+    def __init__(self):
+        self.message_queue = Queue()
+        self.status_lock = Lock()
+        self.complete = False
+        self.success = False
+        self.error = None
+        self.result = None
+        self._messages = []
+    
+    def reset(self):
+        with self.status_lock:
+            while not self.message_queue.empty():
+                self.message_queue.get()
+            self._messages = []
+            self.complete = False
+            self.success = False
+            self.error = None
+            self.result = None
+    
+    def add_message(self, message):
+        self.message_queue.put(message)
+        with self.status_lock:
+            self._messages.append(message)
+    
+    def get_status(self):
+        with self.status_lock:
+            return {
+                'messages': self._messages.copy(),
+                'complete': self.complete,
+                'success': self.success,
+                'error': self.error
+            }
+    
+    def set_complete(self, success, error=None, result=None):
+        with self.status_lock:
+            self.complete = True
+            self.success = success
+            self.error = error
+            self.result = result
+
+# Global processing manager
+processing_manager = ProcessingManager()
+
+def process_pdf(filepath, filename):
     try:
+        # Reset processing status
+        processing_manager.reset()
+
         # Step 1: OCR
+        processing_manager.add_message(f'⚙️ Extracting text from "{filename}"...')
         ocr_text = ocr_processor.extract_text(filepath)
+        processing_manager.add_message(f'✅ Document "{filename}" text extracted successfully!')
 
         # Step 2: Semantic
+        processing_manager.add_message('🔄 Running semantic analysis...')
         semantic_output = semantic_processor.process(ocr_text)
+        processing_manager.add_message('✅ Semantic analysis completed successfully!')
         
         # Create temporary file for Pinata upload
         with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False) as temp_file:
@@ -211,22 +266,27 @@ def process_pdf(filepath):
             semantic_file = temp_file.name
 
         # Step 3: Pinata
+        processing_manager.add_message('☁️ Uploading document to IPFS network...')
         pinata_link = pinata_uploader.upload_document(semantic_file)
+        processing_manager.add_message('✅ Document successfully stored on IPFS!')
         
         # Clean up temporary file
         os.unlink(semantic_file)
 
         # Step 4: NER
+        processing_manager.add_message('🔄 Extracting medical entities and relationships...')
         graph_elements = ner_agent.extract_from_text(semantic_output)
         if not graph_elements:
-            raise Exception("No graph elements extracted.")
-            
+            raise Exception("No medical entities could be extracted from the document.")
+        
         if len(graph_elements) > 1:
+            processing_manager.add_message('🔄 Merging extracted knowledge elements...')
             merged = ner_agent.merge_graph_elements(graph_elements)
         else:
             merged = graph_elements[0]
 
         if validate_graph_element(merged):
+            processing_manager.add_message('🔄 Building knowledge graph structure...')
             # Convert graph elements to session-friendly format
             nodes = []
             relationships = []
@@ -246,27 +306,27 @@ def process_pdf(filepath):
                     'properties': rel.properties
                 })
             
-            # Store graph data using compressed storage
-            store_graph_data(nodes, relationships)
+            processing_manager.add_message(f'✅ Knowledge graph created with {len(nodes)} entities and {len(relationships)} relationships!')
+            
+            result = {
+                'pinata_link': pinata_link,
+                'nodes': nodes,
+                'relationships': relationships,
+                'filename': os.path.basename(filepath)
+            }
+            
+            processing_manager.set_complete(True, result=result)
+            processing_manager.add_message('✅ Document successfully processed!')
+            
+            return {'success': True}
         else:
             raise Exception("Invalid graph element structure.")
-
-        # Store results in session (keep these small)
-        session['pinata_link'] = pinata_link
-        session['processing_complete'] = True
-        # Don't store semantic_output as it's large
-        
-        graph_data = get_graph_data()
-        return {
-            'pinata_link': pinata_link,
-            'nodes': graph_data['stats']['nodes'],
-            'relationships': graph_data['stats']['relationships'],
-            'success': True
-        }
+            
     except Exception as e:
-        print(f"Error in process_pdf: {str(e)}")
-        session['processing_error'] = str(e)
-        return {'error': str(e), 'success': False}
+        error_msg = str(e)
+        print(f"Error in process_pdf: {error_msg}")
+        processing_manager.set_complete(False, error=error_msg)
+        return {'success': False, 'error': error_msg}
 
 @app.route('/knowledge_graph')
 def knowledge_graph():
@@ -298,39 +358,97 @@ def get_graph_data_route():
             'error': str(e)
         })
 
+@app.route('/check_progress')
+def check_progress():
+    status = processing_manager.get_status()
+    
+    # If processing is complete and successful, update session with results
+    if status['complete'] and status['success'] and processing_manager.result:
+        result = processing_manager.result
+        session['pinata_link'] = result['pinata_link']
+        session['pdf_file'] = result['filename']
+        session['processing_complete'] = True
+        
+        # Store graph data in session
+        store_graph_data(result['nodes'], result['relationships'])
+    
+    return jsonify(status)
+
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        
-        file = request.files['file']
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
-        
-        if file and allowed_file(file.filename):
-            filename = file.filename
-            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            file.save(filepath)
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            # Handle AJAX request
+            if 'file' not in request.files:
+                return jsonify({'success': False, 'error': 'No file selected'})
             
-            # Clear previous session data before processing new file
-            session.clear()
+            file = request.files['file']
+            if file.filename == '':
+                return jsonify({'success': False, 'error': 'No file selected'})
             
-            result = process_pdf(filepath)
+            if not allowed_file(file.filename):
+                return jsonify({'success': False, 'error': 'Please upload only PDF files'})
             
-            if result['success']:
-                flash('File processed successfully')
-                session['pdf_file'] = filename
-                return render_template('upload.html',
-                                    pdf_file=filename,
-                                    pinata_link=session.get('pinata_link'))
-            else:
-                flash(f'Error processing file: {result.get("error", "Unknown error")}')
-                return redirect(request.url)
+            try:
+                filename = file.filename
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file.save(filepath)
+                
+                # Clear previous session data and processing status
+                session.clear()
+                processing_manager.reset()
+                
+                # Add initial upload success message
+                processing_manager.add_message(f'📄 Document "{filename}" uploaded successfully!')
+                
+                # Process in a separate thread to not block
+                from threading import Thread
+                thread = Thread(target=process_pdf, args=(filepath, filename))
+                thread.daemon = True  # Ensure thread is terminated when main thread ends
+                thread.start()
+                
+                return jsonify({
+                    'success': True,
+                    'message': f'Started processing {filename}'
+                })
+            except Exception as e:
+                return jsonify({
+                    'success': False,
+                    'error': str(e)
+                })
         else:
-            flash('Please upload only PDF files')
+            # Handle regular form submission
+            if 'file' not in request.files:
+                flash('⚠️ No file selected')
+                return redirect(request.url)
+            
+            file = request.files['file']
+            if file.filename == '':
+                flash('⚠️ No file selected')
+                return redirect(request.url)
+            
+            if not allowed_file(file.filename):
+                flash('⚠️ Please upload only PDF files')
+                return redirect(request.url)
+            
+            try:
+                filename = file.filename
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file.save(filepath)
+                
+                # Clear previous session data before processing new file
+                session.clear()
+                
+                # Show initial upload success message
+                flash(f'📄 Document "{filename}" uploaded successfully!')
+                
+                # Start processing in background
+                process_pdf(filepath, filename)
+                
+                return redirect(url_for('upload_file'))
+            except Exception as e:
+                flash('❌ Error: ' + str(e))
+                return redirect(request.url)
     
     # For GET requests, always start with a clean state
     # Only show data if there's a current session with processed file
@@ -413,5 +531,8 @@ def view_pdf(filename):
                              pinata_link='')
 
 if __name__ == '__main__':
-    port = int(os.getenv('PORT', 5000))  # Use Render's PORT or default to 5000 locally
-    app.run(host='0.0.0.0', port=port, debug=False)
+    app.run(debug=True)
+
+# if __name__ == '__main__':
+#     port = int(os.getenv('PORT', 5000))  # Use Render's PORT or default to 5000 locally
+#     app.run(host='0.0.0.0', port=port, debug=False)

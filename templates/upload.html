@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>ChronosGraph - Medical Knowledge Graph Platform</title>
+    <title>Chronos</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -265,14 +265,111 @@
             font-size: 0.95rem;
         }
 
+        /* Flash Messages Styling */
         .messages {
-            background: var(--light-green);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 20px;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            width: 90%;
+            max-width: 600px;
             font-family: var(--tech-font);
-            font-size: 0.9rem;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+            perspective: 1000px;
+        }
+        
+        .alert {
+            background: #f3f4f6;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 14px 24px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideInFromTop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 
+                0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                0 2px 4px -2px rgba(0, 0, 0, 0.05),
+                0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+            pointer-events: auto;
+            color: #1f2937;
+            backdrop-filter: blur(8px);
+            transform-origin: top center;
+        }
+        
+        .alert:has(span:first-child:is(:contains("✅"))) {
+            background: linear-gradient(135deg, #dcfce7 0%, #f0fdf4 100%);
+            border-color: #86efac;
+            box-shadow: 
+                0 4px 6px -1px rgba(16, 185, 129, 0.1),
+                0 2px 4px -2px rgba(16, 185, 129, 0.05),
+                0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+        }
+        
+        .alert:has(span:first-child:is(:contains("❌"))) {
+            background: linear-gradient(135deg, #fee2e2 0%, #fef2f2 100%);
+            border-color: #fca5a5;
+            box-shadow: 
+                0 4px 6px -1px rgba(239, 68, 68, 0.1),
+                0 2px 4px -2px rgba(239, 68, 68, 0.05),
+                0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+        }
+
+        .alert:has(span:first-child:is(:contains("⚙️")), span:first-child:is(:contains("🔄"))) {
+            background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+            border-color: #7dd3fc;
+            box-shadow: 
+                0 4px 6px -1px rgba(2, 132, 199, 0.1),
+                0 2px 4px -2px rgba(2, 132, 199, 0.05),
+                0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+        }
+
+        .alert span:first-child {
+            font-size: 1.3rem;
+            line-height: 1;
+            filter: saturate(1.2);
+        }
+
+        .alert span:last-child {
+            font-weight: 500;
+            letter-spacing: -0.01em;
+        }
+        
+        @keyframes slideInFromTop {
+            0% {
+                opacity: 0;
+                transform: translateY(-30px) rotateX(-10deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) rotateX(0);
+            }
+        }
+
+        @keyframes fadeOutToTop {
+            0% {
+                opacity: 1;
+                transform: translateY(0) rotateX(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-30px) rotateX(10deg);
+            }
+        }
+
+        /* Add hover effect */
+        .alert:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 6px 8px -1px rgba(0, 0, 0, 0.12),
+                0 3px 6px -2px rgba(0, 0, 0, 0.06),
+                0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+            transition: all 0.2s ease;
         }
 
         .welcome-message {
@@ -319,7 +416,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>ChronosGraph</h1>
+            <h1>Chronos</h1>
             <p class="subtitle">Medical Document Analysis & Knowledge Graph Generation</p>
         </div>
 
@@ -327,7 +424,10 @@
             {% if messages %}
                 <div class="messages">
                     {% for message in messages %}
-                        <p>{{ message }}</p>
+                        <div class="alert">
+                            <span>{{ message.split(" ")[0] }}</span>
+                            <span>{{ " ".join(message.split(" ")[1:]) }}</span>
+                        </div>
                     {% endfor %}
                 </div>
             {% endif %}
@@ -336,17 +436,218 @@
         <div class="upload-section">
             <h2>📄 Document Analysis Pipeline</h2>
             <p>Upload a medical document to extract knowledge and generate insights</p>
-            <form method="post" enctype="multipart/form-data">
+            <form id="upload-form" method="post" enctype="multipart/form-data">
                 <div class="file-input-wrapper">
                     <input type="file" name="file" accept=".pdf" class="file-input" id="file-input">
                     <label for="file-input" class="file-input-label">Choose PDF File</label>
                 </div>
-                <button type="submit" class="btn btn-primary">Process Document</button>
-            {% if pdf_file %}
-            <div style="margin-top: 15px;">
-                <a href="{{ url_for('clear_session') }}" class="button" style="background-color: #f44336;">New Upload</a>
-            </div>
-            {% endif %}
+                <button type="button" class="btn btn-primary" id="upload-btn">Process Document</button>
+                {% if pdf_file %}
+                <div style="margin-top: 15px;">
+                    <a href="{{ url_for('clear_session') }}" class="button" style="background-color: #f44336;">New Upload</a>
+                </div>
+                {% endif %}
+            </form>
+
+            <div id="progress-messages" class="messages" style="display: none;"></div>
+
+            <script>
+                document.getElementById('upload-btn').addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    const form = document.getElementById('upload-form');
+                    const formData = new FormData(form);
+                    const progressMessages = document.getElementById('progress-messages');
+                    const uploadBtn = this;
+                    
+                    if (!form.querySelector('input[type="file"]').files.length) {
+                        showMessage('⚠️ Please select a file first');
+                        return;
+                    }
+
+                    // Reset state
+                    progressMessages.innerHTML = '';
+                    seenMessages.clear();
+                    messageQueue = [];
+                    isShowingMessage = false;
+                    if (pollTimer) clearTimeout(pollTimer);
+                    
+                    // Show container and disable button
+                    progressMessages.style.display = 'flex';
+                    uploadBtn.disabled = true;
+                    
+                    // Show initial message
+                    showMessage('📄 Starting document upload...');
+                    
+                    try {
+                        // Upload file with AJAX
+                        const uploadResponse = await fetch('{{ url_for("upload_file") }}', {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        });
+                        
+                        const responseData = await uploadResponse.json();
+                        
+                        if (!uploadResponse.ok || !responseData.success) {
+                            throw new Error(responseData.error || 'Upload failed');
+                        }
+
+                        // Show upload success and start polling
+                        showMessage('✅ File uploaded successfully!');
+                        setTimeout(() => {
+                            showMessage('⚙️ Starting document processing...');
+                            startPolling();
+                        }, 1000);
+                        
+                    } catch (error) {
+                        console.error('Upload error:', error);
+                        showMessage('❌ Error: ' + error.message);
+                        uploadBtn.disabled = false;
+                    }
+                });
+                
+                let pollTimer = null;
+                let seenMessages = new Set();
+
+                function startPolling() {
+                    seenMessages.clear();
+                    if (pollTimer) clearTimeout(pollTimer);
+                    pollProgress();
+                }
+
+                async function pollProgress() {
+                    try {
+                        const response = await fetch('{{ url_for("check_progress") }}');
+                        const progress = await response.json();
+                        
+                        console.log('Progress update:', progress); // Debug log
+                        
+                        // Show any new messages
+                        if (progress.messages && Array.isArray(progress.messages)) {
+                            // Get only the newest messages
+                            const newMessages = progress.messages.filter(msg => !seenMessages.has(msg));
+                            if (newMessages.length > 0) {
+                                console.log('New messages:', newMessages); // Debug log
+                                newMessages.forEach(msg => {
+                                    showMessage(msg);
+                                    seenMessages.add(msg);
+                                });
+                            }
+                        }
+                        
+                        if (progress.complete) {
+                            if (progress.success) {
+                                showMessage('✅ All processing steps completed successfully!');
+                                setTimeout(() => {
+                                    showMessage('🔄 Reloading page to show results...');
+                                    setTimeout(() => {
+                                        window.location.reload();
+                                    }, 2000);
+                                }, 1500);
+                            } else {
+                                showMessage('❌ ' + (progress.error || 'Processing failed'));
+                                document.getElementById('upload-btn').disabled = false;
+                            }
+                        } else {
+                            // Continue polling if not complete, with a slight delay
+                            pollTimer = setTimeout(pollProgress, 1000);
+                        }
+                    } catch (error) {
+                        console.error('Polling error:', error);
+                        showMessage('❌ Error: ' + error.message);
+                        document.getElementById('upload-btn').disabled = false;
+                    }
+                }
+                
+                let messageQueue = [];
+                let isShowingMessage = false;
+
+                function showMessage(message) {
+                    messageQueue.push(message);
+                    console.log('Message added to queue:', message); // Debug log
+                    if (!isShowingMessage) {
+                        showNextMessage();
+                    }
+                }
+
+                function showNextMessage() {
+                    if (messageQueue.length === 0) {
+                        isShowingMessage = false;
+                        return;
+                    }
+
+                    isShowingMessage = true;
+                    const message = messageQueue.shift();
+                    const progressMessages = document.getElementById('progress-messages');
+                    
+                    // Ensure messages container is visible
+                    progressMessages.style.display = 'flex';
+                    
+                    // Create and add message element
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = 'alert';
+                    
+                    // Split message into emoji and text
+                    let emoji, text;
+                    if (message.startsWith('⚙️') || message.startsWith('✅') || 
+                        message.startsWith('❌') || message.startsWith('⚠️') ||
+                        message.startsWith('🔄') || message.startsWith('📄') ||
+                        message.startsWith('☁️')) {
+                        [emoji, ...text] = message.split(' ');
+                    } else {
+                        emoji = '💬';
+                        text = message.split(' ');
+                    }
+                    
+                    messageDiv.innerHTML = `<span>${emoji}</span><span>${text.join(' ')}</span>`;
+                    progressMessages.appendChild(messageDiv);
+                    
+                    // Scroll into view smoothly
+                    messageDiv.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+                    // Determine display time based on message type
+                    const isComplete = message.includes('complete') || message.includes('success');
+                    const isError = message.includes('❌') || message.includes('⚠️');
+                    const isProcessing = message.includes('⚙️') || message.includes('🔄');
+                    
+                    // Longer display times for important messages
+                    const displayTime = isComplete ? 3500 : 
+                                    isError ? 4000 : 
+                                    isProcessing ? 3000 : 2500;
+
+                    // Set up removal with animation
+                    setTimeout(() => {
+                        messageDiv.style.animation = 'fadeOutToTop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards';
+                        setTimeout(() => {
+                            if (progressMessages.contains(messageDiv)) {
+                                progressMessages.removeChild(messageDiv);
+                                if (!progressMessages.hasChildNodes()) {
+                                    progressMessages.style.display = 'none';
+                                }
+                            }
+                            showNextMessage(); // Show next message after current one is removed
+                        }, 400);
+                    }, displayTime);
+                }
+
+                // Clear messages when clicking outside
+                document.addEventListener('click', function(event) {
+                    const progressMessages = document.getElementById('progress-messages');
+                    const uploadForm = document.getElementById('upload-form');
+                    
+                    if (!progressMessages.contains(event.target) && 
+                        !uploadForm.contains(event.target) && 
+                        !document.getElementById('upload-btn').disabled) {
+                        progressMessages.innerHTML = '';
+                        progressMessages.style.display = 'none';
+                        seenMessages.clear();
+                    }
+                });
+            </script>
+
+
         </div>
     </div>
 
@@ -383,7 +684,7 @@
     </div>
     {% else %}
     <div class="welcome-message">
-        <h3>👋 Welcome to ChronosGraph</h3>
+        <h3>👋 Welcome to Chronos</h3>
         <p>Upload a medical document to begin the knowledge extraction process.<br>
            We'll analyze your document, store it securely, and generate an interactive knowledge graph.</p>
     </div>
