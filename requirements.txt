@@ -11,3 +11,4 @@ langchain-google-genai
 agentic-doc
 llama-index
 langchain-core
+gunicorn
